@@ -1,0 +1,103 @@
+네, 알겠습니다. 목록 페이지에서 '불당' 부분은 제외하고 **'복자여자고등학교' 퀴즈들만 표시**되도록 수정해 드리겠습니다.
+
+아래는 '복자여고' 퀴즈 전용 목록 페이지 코드입니다.
+
+### **✅ 매우 중요한 사용 안내**
+
+이전과 마찬가지로, 이 목록 페이지가 정상적으로 작동하려면 **두 가지**를 꼭 지켜주셔야 합니다.
+
+1.  **파일 위치:** 이 목록 페이지 파일(`복자여고_퀴즈목록.html` 등으로 저장)은 **모든 복자여고 퀴즈 HTML 파일들과 반드시 같은 폴더 안에** 있어야 합니다.
+
+2.  **파일 이름 맞추기:** 아래 코드의 링크 부분(`href="..."`)에 있는 파일 이름을 선생님께서 **실제로 저장하신 퀴즈 파일의 이름과 똑같이** 수정해주셔야 합니다.
+
+      * **예시:** 아래 코드에 `<a href="복자여고_생명시스템.html">` 이라고 되어 있다면, 선생님께서 저장하신 생명 시스템 퀴즈 파일의 이름도 `복자여고_생명시스템.html` 이어야 합니다.
+
+-----
+
+### ✨ 완성된 '복자여고' 퀴즈 전용 목록 페이지
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>복자여고 과학 - 온라인 퀴즈 목록</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .quiz-link-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .quiz-link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .quiz-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1a202c;
+        }
+        .go-btn {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6">
+    <div class="container mx-auto">
+        <header class="text-center my-8">
+            <h1 class="text-4xl font-bold text-gray-800">온라인 퀴즈 목록</h1>
+            <p class="text-gray-500 mt-2">복자여자고등학교 | 유선종 선생님</p>
+        </header>
+
+        <main>
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold border-b-2 border-blue-500 pb-2 mb-6 text-gray-700">복자여자고등학교</h2>
+                <div class="quiz-list">
+                    <a href="복자여고_지구시스템_퀴즈.html" class="quiz-link-card">
+                        <span class="quiz-title">3.1.1 지구 시스템</span>
+                        <span class="go-btn">풀어보기 &rarr;</span>
+                    </a>
+                    <a href="복자여고_지권의변화_퀴즈.html" class="quiz-link-card">
+                        <span class="quiz-title">3.1.2 지권의 변화</span>
+                        <span class="go-btn">풀어보기 &rarr;</span>
+                    </a>
+                    <a href="복자여고_역학적시스템_퀴즈.html" class="quiz-link-card">
+                        <span class="quiz-title">3.2.1 역학적 시스템</span>
+                        <span class="go-btn">풀어보기 &rarr;</span>
+                    </a>
+                    <a href="복자여고_생명시스템_퀴즈.html" class="quiz-link-card">
+                        <span class="quiz-title">3.3.1 생명 시스템</span>
+                        <span class="go-btn">풀어보기 &rarr;</span>
+                    </a>
+                    </div>
+            </section>
+        </main>
+        
+        <footer class="text-center mt-12 mb-6">
+            <p class="text-gray-400 text-sm">제작: Appia Science</p>
+        </footer>
+    </div>
+</body>
+</html>
+```
