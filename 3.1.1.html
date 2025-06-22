@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3.1.1 지구 시스템 (복자여고)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .question-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .question-text .blank-emphasis {
+            font-weight: bold;
+            color: #3b82f6;
+        }
+        .option-label {
+            display: block;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            background-color: #f7fafc;
+        }
+        .option-label:hover {
+            background-color: #e2e8f0;
+        }
+        .option-input:checked + .option-label {
+            background-color: #4299e1;
+            color: white;
+            border-color: #2b6cb0;
+        }
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .feedback.correct {
+            background-color: #c6f6d5;
+            color: #2f855a;
+            border: 1px solid #9ae6b4;
+        }
+        .feedback.incorrect {
+            background-color: #fed7d7;
+            color: #c53030;
+            border: 1px solid #fbb6ce;
+        }
+        .explanation {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        .action-button {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            margin-top: 1rem;
+            margin-right: 0.5rem;
+        }
+        .action-button:hover:not(:disabled) {
+            background-color: #2d3748;
+        }
+        .action-button:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .pagination-controls button, .pagination-controls span {
+            margin: 0 0.25rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .pagination-controls button:disabled {
+            background-color: #e2e8f0;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .pagination-controls .page-number.current {
+            background-color: #4299e1;
+            color: white;
+            border-color: #2b6cb0;
+            font-weight: bold;
+        }
+        .score-section {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: #e9f5ff;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .score-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+        .quiz-title-in-score {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 0.75rem;
+        }
+        .motivational-quote {
+            font-size: 1rem;
+            font-style: italic;
+            color: #374151;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #cbd5e0;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .page-info {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); display: flex;
+            justify-content: center; align-items: center; z-index: 1000;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .popup-overlay.show { opacity: 1; visibility: visible; }
+        .popup-content {
+            background-color: white; padding: 2.5rem; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); text-align: center;
+            max-width: 420px; width: 90%;
+        }
+        .popup-content h2 {
+            font-size: 1.75rem; font-weight: 700; color: #1a202c; margin-bottom: 1rem;
+        }
+        .popup-content p.welcome-message {
+            font-size: 1rem; color: #4a5568; margin-bottom: 1.5rem; line-height: 1.6;
+        }
+        .popup-password-input {
+            width: 100%; padding: 0.75rem; margin-bottom: 1rem;
+            border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .popup-confirm-btn {
+            background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem;
+            border-radius: 8px; font-weight: 500; cursor: pointer;
+            transition: background-color 0.2s; border: none; width: 100%;
+            font-size: 1rem;
+        }
+        .popup-confirm-btn:hover { background-color: #2563eb; }
+        .popup-error-message {
+            color: #ef4444; font-size: 0.875rem; margin-top: 0.75rem;
+            min-height: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-popup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>복자여자고등학교</h2>
+            <p class="welcome-message">유선종 선생님의 학습 자료입니다.<br>비밀번호를 입력해주세요.</p>
+            <input type="password" id="popup-password" class="popup-password-input" placeholder="비밀번호">
+            <button id="popup-confirm" class="popup-confirm-btn">확인</button>
+            <p id="popup-error" class="popup-error-message"></p>
+        </div>
+    </div>
+    <div class="quiz-container">
+        <h1>3.1.1 지구 시스템</h1>
+        <div class="page-info" id="page-info"></div>
+        <div id="quiz">
+            </div>
+        <div class="pagination-controls" id="pagination-controls">
+            </div>
+        <button id="submit-page-btn" class="action-button w-full sm:w-auto mx-auto block">이번 페이지 채점하기</button>
+        <div class="score-section" id="score-section" style="display: none;">
+            <p class="score-text quiz-title-in-score" id="quiz-main-title-in-score"></p>
+            <p class="score-text" id="current-page-score-text"></p>
+            <p class="score-text" id="total-score-text"></p>
+            <p class="motivational-quote" id="motivational-quote" style="display: none;"></p>
+        </div>
+    </div>
+
+    <script>
+        // 문제 데이터
+        const questions = [
+            { id: 1, type: 'fill-in', text: "1. 태양계를 구성하는 천체들은 태양의 ( )에 붙잡혀 공전한다.", answer: "중력", options: ["자기력", "원심력", "중력", "항력"], explanation: "태양계의 모든 행성과 천체들은 태양의 거대한 중력에 의해 그 궤도를 유지하며 공전하고 있습니다." },
+            { id: 2, type: 'ox', text: "2. 수권은 액체 상태의 물만을 포함한다.", answer: "X", options: ["O", "X"], explanation: "수권은 바다, 강과 같은 액체 상태의 물뿐만 아니라, 빙하와 같은 고체 상태의 물, 수증기와 같은 기체 상태의 물까지 모두 포함합니다." },
+            { id: 3, type: 'ox', text: "3. 수권은 빙하와 같은 고체 상태의 물도 포함한다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 수권은 지구에 존재하는 모든 상태의 물을 포함하므로, 고체인 빙하도 수권의 일부입니다." },
+            { id: 4, type: 'fill-in', text: "4. 행성에 생명체가 존재하기 위한 조건에는 ( )상태의 물이 있어야한다.", answer: "액체", options: ["고체", "기체", "액체", "플라스마"], explanation: "액체 상태의 물은 다양한 물질을 녹여 생명체 내에서 일어나는 화학 반응의 용매 역할을 하므로 생명 유지에 필수적입니다." },
+            { id: 5, type: 'fill-in', text: "5. 행성에 생명체가 존재하기 위한 조건에는 생명활동에 필요한 ( )가 존재해야 한다.", answer: "대기", options: ["자기장", "바다", "대기", "위성"], explanation: "대기는 생명체의 호흡에 필요한 기체를 공급하고, 유해한 우주선과 자외선을 차단하며, 온도를 일정하게 유지시켜주는 중요한 역할을 합니다." },
+            { id: 6, type: 'fill-in', text: "6. 지구에는 지속적으로 에너지를 공급해주는 ( )이 있다.", answer: "태양", options: ["달", "목성", "태양", "지열"], explanation: "태양은 지구 생명권의 거의 모든 에너지의 근원으로, 광합성을 통해 생태계의 기초를 형성하고 지구의 기후를 유지합니다." },
+            { id: 7, type: 'fill-in', text: "7. 금성에 생명체가 없는 까닭은 대기의 대부분이 이산화탄소로 온도가 매우 높아 ( ) 상태의 물이 존재 하지 않기 때문이다.", answer: "액체", options: ["모든", "기체", "고체", "액체"], explanation: "금성은 두꺼운 이산화탄소 대기로 인한 강력한 온실 효과로 표면 온도가 약 470℃에 달해, 액체 상태의 물이 존재할 수 없습니다." },
+            { id: 8, type: 'fill-in', text: "8. 금성에는 ( )과 ( )이 존재하지 않는다.", answer: "수권;생물권", options: ["기권;지권", "수권;생물권", "기권;생물권", "수권;지권"], explanation: "금성은 액체 상태의 물(수권)이 없고, 생명체(생물권)가 살 수 없는 극한의 환경을 가지고 있습니다." },
+            { id: 9, type: 'ox', text: "9. 생물권은 기권, 수권, 지권에 모두 분포한다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 생물은 땅 속(지권), 물 속(수권), 하늘(기권) 등 지구 시스템의 모든 영역에 걸쳐 분포합니다." },
+            { id: 10, type: 'fill-in', text: "10. ( )의 영향으로 대기의 대부분은 지표 근처에 존재한다.", answer: "중력", options: ["기압", "온도", "중력", "밀도"], explanation: "지구의 중력이 공기 분자들을 끌어당기고 있기 때문에, 대기의 약 99%가 지표로부터 32km 이내에 모여 있습니다." },
+            { id: 11, type: 'fill-in', text: "11. 고도가 높아질수록 공기의 밀도( ) 기압 ( )한다.", answer: "감소;감소", options: ["증가;증가", "감소;증가", "증가;감소", "감소;감소"], explanation: "고도가 높아질수록 중력의 영향이 작아져 공기 분자가 희박해지므로 밀도가 감소하고, 공기의 양 자체가 줄어들어 기압도 감소합니다." },
+            { id: 12, type: 'fill-in', text: "12. 기권을 구성하는 기체 중 가장 많은 것은 ( )이다.", answer: "질소", options: ["산소", "질소", "아르곤", "이산화탄소"], explanation: "지구 대기의 약 78%는 질소(N₂)가 차지하고 있으며, 산소(O₂)가 약 21%로 그 뒤를 잇습니다." },
+            { id: 13, type: 'fill-in', text: "13. 기권을 구성하는 기체 중 변화량이 매우 큰 것은 ( )이다.", answer: "수증기", options: ["질소", "산소", "이산화탄소", "수증기"], explanation: "수증기의 양은 장소와 시간에 따라 크게 변하며, 기상 현상을 일으키는 주요 원인이 됩니다." },
+            { id: 14, type: 'fill-in', text: "14. 기권의 층상구조에서 대류가 일어나는 층은 ( ) ( )", answer: "대류권;중간권", options: ["대류권;성층권", "성층권;중간권", "대류권;중간권", "중간권;열권"], explanation: "대류권과 중간권은 고도가 높아질수록 온도가 낮아지는 구조를 가져, 불안정하여 대류 현상이 활발하게 일어납니다." },
+            { id: 15, type: 'fill-in', text: "15. 기권의 층상구조에서 기상현상이 나타나는 층은 ( )", answer: "대류권", options: ["대류권", "성층권", "중간권", "열권"], explanation: "대류권에는 수증기가 풍부하고 대류가 활발하여 눈, 비, 구름과 같은 다양한 기상 현상이 나타납니다." },
+            { id: 16, type: 'fill-in', text: "16. 중간권은 대류가 일어나지만 기상현상이 나타나지 않는 이유는 ( )가 매우 적기 때문이다.", answer: "수증기", options: ["먼지", "수증기", "산소", "오존"], explanation: "기상 현상은 대류와 수증기가 모두 있어야 발생합니다. 중간권은 대류는 일어나지만 수증기가 거의 없어 기상 현상이 나타나지 않습니다." },
+            { id: 17, type: 'fill-in', text: "17. 기권의 층상구조에서 대기가 매우 희박하여 일교차가 큰 층은 ( )이다.", answer: "열권", options: ["성층권", "중간권", "열권", "대류권"], explanation: "열권은 공기 분자가 매우 희박하여 열을 저장하기 어렵기 때문에, 낮과 밤의 온도 차이(일교차)가 극심하게 나타납니다." },
+            { id: 18, type: 'fill-in', text: "18. 기권의 층상 구조에서 태양 복사 에너지를 직접 흡수하는 층은 ( )이다.", answer: "열권", options: ["대류권", "성층권", "중간권", "열권"], explanation: "열권의 대기는 태양의 강한 X선이나 자외선 같은 단파장 에너지를 직접 흡수하여 온도가 매우 높게 올라갑니다." },
+            { id: 19, type: 'fill-in', text: "19. 기권의 층상 구조에서 자외선을 흡수하는 오존층이 있는 층은 ( )이다.", answer: "성층권", options: ["대류권", "성층권", "중간권", "열권"], explanation: "성층권에 존재하는 오존층(O₃)은 태양으로부터 오는 유해한 자외선을 흡수하여 지상의 생명체를 보호합니다." },
+            { id: 20, type: 'fill-in', text: "20. 기권의 층상 구조에서 오로라를 관측할 수 있는 층은 ( )이다.", answer: "열권", options: ["성층권", "중간권", "열권", "외기권"], explanation: "오로라는 태양풍의 입자들이 지구 자기장에 이끌려 열권의 대기 입자들과 충돌하면서 빛을 내는 현상입니다." },
+            { id: 21, type: 'fill-in', text: "21. 기권의 층상 구조에서 유성을 관측할 수 있는 층은 ( )이다.", answer: "중간권", options: ["대류권", "성층권", "중간권", "열권"], explanation: "유성(별똥별)은 우주에서 온 작은 먼지나 암석 조각이 중간권의 대기와 마찰하여 타면서 빛을 내는 현상입니다." },
+            { id: 22, type: 'fill-in', text: "22. 열권의 일교차가 매우 큰 이유는 대기가 매우 ( )하기 때문이다.", answer: "희박", options: ["안정", "불안정", "희박", "밀집"], explanation: "열권은 공기가 매우 희박하여 열을 거의 저장할 수 없기 때문에, 태양 빛을 받을 때와 받지 않을 때의 온도 차이가 극심합니다." },
+            { id: 23, type: 'ox', text: "23. 중력이 없어진다면 대류 현상은 일어나지 않을 것이다.", answer: "O", options: ["O", "X"], explanation: "대류는 중력 때문에 차가운 유체(밀도 큼)가 아래로, 뜨거운 유체(밀도 작음)가 위로 이동하는 현상입니다. 중력이 없다면 밀도 차에 의한 이동이 일어나지 않습니다." },
+            { id: 24, type: 'fill-in', text: "24. 수권의 대부분은 ( )이고 약 3%만 ( )이다.", answer: "해수;육수", options: ["빙하;해수", "해수;육수", "육수;해수", "강물;빙하"], explanation: "지구의 물 중 약 97%는 짠물인 해수이며, 약 3%만이 육지에 존재하는 담수인 육수입니다." },
+            { id: 25, type: 'fill-in', text: "25. 육수의 대부분은 ( )상태로 존재한다.", answer: "고체", options: ["액체", "기체", "고체", "지하수"], explanation: "육수 중에서 가장 많은 양을 차지하는 것은 빙하(만년설 포함)로, 고체 상태로 존재합니다." },
+            { id: 26, type: 'ox', text: "26. 빙하는 고체 상태의 물로 수권에 포함된다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 수권은 지구상의 모든 물을 의미하므로, 고체 상태인 빙하도 수권에 포함됩니다." },
+            { id: 27, type: 'fill-in', text: "27. 수권의 층상 구조에는 ( ) ( ) ( )이 있다.", answer: "혼합층;수온약층;심해층", options: ["대류층;성층권;중간층", "혼합층;수온약층;심해층", "표수층;점이층;심해층", "지각;맨틀;핵"], explanation: "해수는 깊이에 따른 수온 분포를 기준으로 혼합층, 수온약층, 심해층으로 구분됩니다." },
+            { id: 28, type: 'fill-in', text: "28. 수권의 층상 구조 중 바람의 영향을 많이 받는 층은 ( )", answer: "혼합층", options: ["혼합층", "수온약층", "심해층", "전체"], explanation: "혼합층은 해수 표면에 위치하여 바람에 의해 물이 섞이는 혼합 작용이 활발하게 일어나는 층입니다." },
+            { id: 29, type: 'fill-in', text: "29. 수권의 층상 구조 중 위도와 계절에 영향을 많이 받는 층은 ( )", answer: "혼합층", options: ["심해층", "수온약층", "혼합층", "모든층"], explanation: "혼합층의 수온은 태양 복사 에너지의 양(위도, 계절)과 바람의 세기(계절)에 따라 크게 달라집니다." },
+            { id: 30, type: 'fill-in', text: "30. 수권의 층상 구조 중 위도와 계절에 영향을 받지 않는 층은 ( )", answer: "심해층", options: ["혼합층", "심해층", "수온약층", "없음"], explanation: "심해층은 태양 에너지가 도달하지 못하는 깊은 바다이므로, 위도나 계절에 관계없이 수온이 매우 낮고 거의 일정하게 유지됩니다." },
+            { id: 31, type: 'fill-in', text: "31. 수권의 층상 구조 중 매우 안정한 층은 유일하게 ( )이다.", answer: "수온약층", options: ["혼합층", "심해층", "수온약층", "모든층"], explanation: "수온약층은 위쪽은 따뜻하고 아래쪽은 차가운 물로 이루어져 있어 대류가 일어나지 않는 매우 안정한 층입니다." },
+            { id: 32, type: 'fill-in', text: "32. 수권의 층상 구조 중 연직 운동이 일어나기 어려워 혼합층과 심해층 사이의 물질과 에너지 교환을 저지하는 층은 ( )", answer: "수온약층", options: ["혼합층", "수온약층", "심해층", "경계층"], explanation: "수온약층은 매우 안정하여 물의 상하 운동(연직 운동)을 억제하므로, 혼합층과 심해층 사이의 물질과 에너지 교환을 차단하는 역할을 합니다." },
+            { id: 33, type: 'fill-in', text: "33. 우리나라는 겨울에 바람이 더 많이 불기 때문에 혼합층의 두께는 ( )에 두껍다.", answer: "겨울", options: ["봄", "여름", "가을", "겨울"], explanation: "혼합층의 두께는 바람이 강할수록 두꺼워집니다. 우리나라는 일반적으로 겨울철에 바람이 강하게 불어 혼합층이 더 두껍게 발달합니다." },
+            { id: 34, type: 'fill-in', text: "34. 중위도는 바람이 더 많이 불기 때문에 혼합층의 두께는 ( )에서 두껍다.", answer: "중위도", options: ["적도", "저위도", "중위도", "고위도"], explanation: "바람이 가장 강하게 부는 중위도 지역에서 혼합층의 두께가 가장 두껍게 나타납니다." },
+            { id: 35, type: 'fill-in', text: "35. 혼합층이 발달하는 위도는 ( )", answer: "중위도", options: ["저위도", "중위도", "고위도", "모든 위도"], explanation: "바람의 혼합 작용이 가장 활발한 중위도에서 혼합층이 가장 잘 발달합니다." },
+            { id: 36, type: 'fill-in', text: "36. 수온약층이 발달하는 위도는 ( )", answer: "저위도", options: ["저위도", "중위도", "고위도", "모든 위도"], explanation: "태양 복사 에너지를 강하게 받아 표층 수온이 매우 높은 저위도(적도 부근)에서 수온약층이 가장 뚜렷하게 발달합니다." },
+            { id: 37, type: 'fill-in', text: "37. 층상구조가 발달하지 않는 위도는 ( )", answer: "고위도", options: ["저위도", "중위도", "고위도", "없음"], explanation: "고위도 지역은 표층까지 수온이 매우 낮아 깊이에 따른 수온 변화가 거의 없기 때문에 뚜렷한 층상 구조가 나타나지 않습니다." },
+            { id: 38, type: 'fill-in', text: "38. 기권은 고도에 따른 ( )를 기준으로 4개의 층으로 구분한다.", answer: "온도 분포", options: ["압력 분포", "밀도 분포", "온도 분포", "성분 차이"], explanation: "기권은 높이에 따라 온도가 오르내리는 변화를 기준으로 대류권, 성층권, 중간권, 열권의 네 층으로 나눕니다." },
+            { id: 39, type: 'fill-in', text: "39. 수권은 깊이에 따른 ( )를 기준으로 3개의 층으로 구분한다.", answer: "온도 분포", options: ["압력 분포", "염분 분포", "온도 분포", "밀도 분포"], explanation: "해수는 깊이에 따라 수온이 변하는 양상을 기준으로 혼합층, 수온약층, 심해층의 세 층으로 나눕니다." },
+            { id: 40, type: 'ox', text: "40. 기권, 수권, 지권은 모두 온도 분포를 기준으로 층을 구분한다.", answer: "X", options: ["O", "X"], explanation: "기권과 수권은 온도 분포를 기준으로 층을 구분하지만, 지권은 주로 구성 물질과 상태(물리적 성질)에 따라 구분합니다." },
+            { id: 41, type: 'fill-in', text: "41. 지권을 구성 물질과 상태에 따라 분류하면 ( ), ( ), ( ), ( )", answer: "지각;맨틀;외핵;내핵", options: ["암석권;연약권;하부맨틀;핵", "지각;맨틀;외핵;내핵", "대륙지각;해양지각;맨틀;핵", "판;열점;해구;해령"], explanation: "지권은 화학적 조성과 물리적 상태에 따라 바깥쪽부터 지각, 맨틀, 외핵, 내핵의 4개 층으로 구분됩니다." },
+            { id: 42, type: 'fill-in', text: "42. 지권을 암석 강도와 물리적 성질로 분류하면 ( ), ( ), 전이대", answer: "암석권;연약권", options: ["지각;맨틀", "암석권;연약권", "대륙판;해양판", "상부맨틀;하부맨틀"], explanation: "지권 상부는 물리적 성질에 따라 단단한 암석권(판), 부분 용융되어 유동성이 있는 연약권, 그리고 그 아래 전이대 등으로 구분합니다." },
+            { id: 43, type: 'fill-in', text: "43. 지각, 맨틀, 외핵, 내핵 중 대류가 일어나는 층은 ( ), ( )", answer: "맨틀;외핵", options: ["지각;맨틀", "맨틀;외핵", "외핵;내핵", "지각;외핵"], explanation: "맨틀(고체)과 외핵(액체)은 유동성이 있어, 내부의 온도차로 인해 느린 대류가 일어납니다. 맨틀의 대류는 판의 이동을, 외핵의 대류는 지구 자기장을 만듭니다." },
+            { id: 44, type: 'fill-in', text: "44. 지각, 맨틀, 외핵, 내핵 중 액체 상태인 층은 ( )", answer: "외핵", options: ["지각", "맨틀", "외핵", "내핵"], explanation: "지진파 중 S파가 통과하지 못하는 것으로 보아 외핵은 액체 상태의 철과 니켈로 이루어져 있음을 알 수 있습니다." },
+            { id: 45, type: 'fill-in', text: "45. 지각, 맨틀, 외핵, 내핵 중 고체 상태이지만 유동성이 있는 층은 ( )", answer: "맨틀", options: ["지각", "맨틀", "외핵", "내핵"], explanation: "맨틀은 고체 상태이지만 높은 온도와 압력으로 인해 점성을 가지고 매우 느리게 움직이는 유동성이 있습니다." },
+            { id: 46, type: 'fill-in', text: "46. 암석권, 연약권, 전이대 중 부분 용융된 고체 상태로 유동성이 있는 층은 ( )", answer: "연약권", options: ["암석권", "연약권", "전이대", "하부맨틀"], explanation: "연약권은 맨틀의 일부로, 암석이 부분적으로 녹아 있어 유동성을 가지며 그 위의 암석권을 이동시키는 역할을 합니다." },
+            { id: 47, type: 'fill-in', text: "47. 대륙지각과 해양지각 중 두께가 두꺼운 것은 ( )", answer: "대륙지각", options: ["대륙지각", "해양지각", "같다", "알 수 없다"], explanation: "대륙지각의 평균 두께는 약 35km로, 약 5km인 해양지각보다 훨씬 두껍습니다." },
+            { id: 48, type: 'fill-in', text: "48. 대륙지각과 해양지각 중 밀도가 큰 것은 ( )", answer: "해양지각", options: ["대륙지각", "해양지각", "같다", "알 수 없다"], explanation: "해양지각은 주로 현무암질 암석으로 이루어져 있어, 화강암질 암석이 주성분인 대륙지각보다 밀도가 더 큽니다." },
+            { id: 49, type: 'fill-in', text: "49. 대륙판과 해양판 중 두께가 두꺼운 것은 ( )", answer: "대륙판", options: ["대륙판", "해양판", "같다", "알 수 없다"], explanation: "판은 지각과 상부 맨틀 일부를 포함하며, 지각 자체가 두꺼운 대륙판이 해양판보다 두께가 더 두껍습니다." },
+            { id: 50, type: 'fill-in', text: "50. 대륙판과 해양판 중 밀도가 큰 것은 ( )", answer: "해양판", options: ["대륙판", "해양판", "같다", "알 수 없다"], explanation: "해양판은 밀도가 큰 해양지각을 포함하고 있어, 대륙판보다 전체적인 밀도가 더 큽니다. 그래서 섭입대에서 해양판이 대륙판 아래로 들어갑니다." },
+            { id: 51, type: 'fill-in', text: "51. ( )은 지각과 상부맨틀 일부를 포함한 구간을 의미한다.", answer: "암석권", options: ["연약권", "지권", "암석권", "판"], explanation: "암석권은 지표를 덮고 있는 단단한 암석층으로, 지각 전체와 맨틀의 최상부를 포함하며 여러 개의 판으로 이루어져 있습니다." },
+            { id: 52, type: 'ox', text: "52. 지각과 맨틀은 대부분 규소와 산소로 이루어져 있다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 지각과 맨틀의 주성분은 규산염 광물(규소+산소+기타 원소)입니다." },
+            { id: 53, type: 'ox', text: "53. 외핵과 내핵은 대부분 철과 니켈로 이루어져 있다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 핵은 밀도가 매우 큰 물질로 이루어져 있으며, 주성분은 철과 니켈입니다." },
+            { id: 54, type: 'ox', text: "54. 생명체는 지권의 표면은 물론, 수권의 해저 부근에도 분포한다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 생물권은 지표, 토양 속, 심해 열수구 근처, 상공 등 다양한 환경에 걸쳐 분포합니다." },
+            { id: 55, type: 'ox', text: "55. 생물권에는 미생물이 포함된다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 생물권은 지구에 사는 모든 생명체를 포함하며, 여기에는 식물, 동물뿐만 아니라 미생물도 포함됩니다." },
+            { id: 56, type: 'ox', text: "56. 최초의 생명체는 바다에서 출현하였다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 과학자들은 최초의 생명체가 자외선이 차단되는 바다(수권)에서 탄생했을 것으로 보고 있습니다." },
+            { id: 57, type: 'fill-in', text: "57. 생물권은 ( )-> ( )-> ( )순서로 분포 범위가 확장되었다.", answer: "수권;지권;기권", options: ["기권;수권;지권", "지권;수권;기권", "수권;지권;기권", "수권;기권;지권"], explanation: "최초의 생명체는 바다(수권)에서 출현하여, 육상(지권)으로 진출했으며, 이후 하늘(기권)로 활동 범위를 넓혔습니다." },
+            { id: 58, type: 'fill-in', text: "58. ( )은 우주선 또는 태양풍을 차단해 지구에 생명체가 살 수 있도록 한다.", answer: "지구자기장", options: ["오존층", "대기", "지구자기장", "중력장"], explanation: "지구 자기장은 태양에서 날아오는 고에너지 입자(태양풍)가 지표에 직접 도달하는 것을 막아주는 보호막 역할을 합니다." },
+            { id: 59, type: 'fill-in', text: "59. 지구자기장은 ( )의 대류로 인해 형성된다.", answer: "외핵", options: ["맨틀", "내핵", "외핵", "지각"], explanation: "액체 상태인 외핵에서 철과 니켈이 대류하면서 유도 전류를 만들고, 이 전류가 지구 자기장을 형성하는 것으로 알려져 있습니다(다이나모 이론)." },
+            { id: 60, type: 'ox', text: "60. 우주와 지구 사이에 에너지와 물질 모두 이동한다.", answer: "X", options: ["O", "X"], explanation: "지구는 태양 에너지를 받는 등 에너지 교환은 활발하지만, 물질 교환(운석 유입 등)은 거의 없어 '닫힌계'로 간주합니다." },
+            { id: 61, type: 'fill-in', text: "61. ( )는 지구 시스템의 에너지원 중 가장 많은 양을 차지한다.", answer: "태양복사에너지", options: ["지구내부에너지", "조력에너지", "태양복사에너지", "화석연료"], explanation: "지구 시스템을 움직이는 에너지의 약 99.98%는 태양 복사 에너지로부터 공급됩니다." },
+            { id: 62, type: 'fill-in', text: "62. ( )는 지구 탄생과정에서 축적된 열과 방사성 원소의 붕괴열로 발생한다.", answer: "지구내부에너지", options: ["태양복사에너지", "지구내부에너지", "조력에너지", "지열에너지"], explanation: "지구 내부 에너지는 지구 형성 초기의 열과 내부의 방사성 원소가 붕괴하면서 발생하는 열이 근원입니다." },
+            { id: 63, type: 'fill-in', text: "63. ( )로 인해 지진과 화산이 발생한다.", answer: "지구내부에너지", options: ["태양복사에너지", "지구내부에너지", "조력에너지", "판의 이동"], explanation: "지구 내부 에너지는 맨틀 대류를 일으켜 판을 이동시키고, 그 결과 지진이나 화산 활동과 같은 지각 변동이 발생합니다." },
+            { id: 64, type: 'fill-in', text: "64. 밀물과 썰물은 태양과 ( )의 인력으로 인해 일어난다.", answer: "달", options: ["지구", "달", "목성", "화성"], explanation: "밀물과 썰물(조석 현상)은 주로 달의 인력에 의해 발생하며, 태양의 인력도 일부 영향을 미칩니다." },
+            { id: 65, type: 'fill-in', text: "65. ( )는 밀물과 썰물을 일으키는 에너지이다.", answer: "조력에너지", options: ["파력에너지", "조류에너지", "조력에너지", "수력에너지"], explanation: "달과 태양의 인력에 의해 해수면이 주기적으로 오르내리게 하는 에너지를 조력 에너지라고 합니다." },
+            { id: 66, type: 'fill-in', text: "66. 태양복사에너지는 태양 중심의 ( )반응으로 생긴다.", answer: "수소핵융합", options: ["핵분열", "화학", "수소핵융합", "헬륨핵분열"], explanation: "태양의 중심부에서는 수소 원자핵 4개가 융합하여 헬륨 원자핵 1개가 되는 수소 핵융합 반응이 일어나며 막대한 에너지가 발생합니다." },
+            { id: 67, type: 'fill-in', text: "67. 조력 에너지는 달과 태양 중 ( )에 의한 인력이 더 큰 영향을 끼친다.", answer: "달", options: ["태양", "달", "같다", "영향없다"], explanation: "태양이 질량은 훨씬 크지만, 달이 지구에 훨씬 더 가깝기 때문에 조석 현상에는 달의 인력이 더 큰 영향을 미칩니다." },
+            { id: 68, type: 'fill-in', text: "68. 호흡과 광합성은 ( )과 ( )사이의 상호작용", answer: "기권;생물권", options: ["기권;수권", "기권;생물권", "수권;생물권", "지권;생물권"], explanation: "생물(생물권)이 대기 중의 산소를 마시고 이산화탄소를 내뱉거나(호흡), 이산화탄소를 흡수하고 산소를 내보내는(광합성) 것은 기권과의 상호작용입니다." },
+            { id: 69, type: 'fill-in', text: "69. 풍화, 침식은 기권, 수권, 생물권이 ( )과 상호작용하며 지형이 변하는 것이다.", answer: "지권", options: ["기권", "수권", "지권", "외권"], explanation: "바람(기권), 물(수권), 식물의 뿌리(생물권) 등이 암석(지권)을 깎고 변화시키는 것이 풍화와 침식 작용입니다." },
+            { id: 70, type: 'fill-in', text: "70. 강수와 증발은 ( )과 ( )사이의 상호작용", answer: "기권;수권", options: ["기권;수권", "수권;지권", "지권;기권", "기권;생물권"], explanation: "바닷물(수권)이 증발하여 수증기(기권)가 되고, 이 수증기가 응결하여 비나 눈(기권)이 되어 다시 수권으로 돌아오는 것은 기권과 수권의 상호작용입니다." },
+            { id: 71, type: 'fill-in', text: "71. ( )는 해수면 위에 지속적으로 부는 바람에 의해 발생한다.", answer: "해류", options: ["파도", "해일", "해류", "조류"], explanation: "해류는 기권(바람)과 수권(해수)의 상호작용으로, 바람이 해수면을 지속적으로 밀어주면서 일정한 흐름이 만들어지는 것입니다." },
+            { id: 72, type: 'fill-in', text: "72. 해류를 통해 ( )와 ( )이 이동해 지구의 균형을 맞춘다.", answer: "에너지;물질", options: ["에너지;물질", "열;염분", "물;영양분", "산소;이산화탄소"], explanation: "해류는 저위도의 남는 에너지를 고위도로 운반하고, 다양한 물질을 순환시키며 지구 전체의 에너지 불균형을 해소하고 생태계 균형을 유지합니다." },
+            { id: 73, type: 'fill-in', text: "73. 물의 순환의 에너지원은 ( )에너지이다.", answer: "태양", options: ["지구 내부", "조력", "태양", "화학"], explanation: "태양 에너지가 물을 증발시켜 수증기로 만들고 대기를 순환시키기 때문에, 물의 순환을 일으키는 근본적인 에너지원은 태양 에너지입니다." },
+            { id: 74, type: 'fill-in', text: "74. 액체 상태의 물이 기체 상태가 될 때 에너지를 ( ) 한다.", answer: "흡수", options: ["방출", "흡수", "생성", "소모"], explanation: "액체인 물이 기체인 수증기로 상태 변화(증발)하기 위해서는 주변의 열에너지를 흡수해야 합니다. 이를 기화열이라고 합니다." },
+            { id: 75, type: 'fill-in', text: "75. 기체 상태의 물이 액체 상태가 될 때 에너지를 ( )한다.", answer: "방출", options: ["방출", "흡수", "생성", "소모"], explanation: "기체인 수증기가 액체인 물로 상태 변화(응결)하면서 가지고 있던 에너지를 외부로 방출합니다. 이를 액화열이라고 합니다." },
+            { id: 76, type: 'fill-in', text: "76. 물이 수권에서 기권으로 이동할 때 에너지를 ( ) 한다.", answer: "흡수", options: ["방출", "흡수", "교환", "보존"], explanation: "수권의 물이 증발하여 기권의 수증기가 되는 과정이므로, 주변의 에너지를 흡수합니다." },
+            { id: 77, type: 'fill-in', text: "77. 물이 기권에서 수권으로 이동할 때 에너지를 ( )한다.", answer: "방출", options: ["방출", "흡수", "교환", "보존"], explanation: "기권의 수증기가 응결하여 비나 눈이 되어 수권으로 돌아오는 과정이므로, 에너지를 방출합니다." },
+            { id: 78, type: 'fill-in', text: "78. 비나 눈이 내리는 것은 물이 ( )에서 ( )으로 이동하는 것이다.", answer: "기권;수권", options: ["수권;기권", "기권;수권", "지권;수권", "수권;지권"], explanation: "대기(기권)에 있던 수증기가 응결하여 비나 눈의 형태로 지표(수권 또는 지권)로 떨어지는 현상입니다." },
+            { id: 79, type: 'fill-in', text: "79. 비나 눈이 내릴 때 물은 에너지를 ( )한다.", answer: "방출", options: ["흡수", "방출", "소멸", "생성"], explanation: "수증기가 물이나 얼음으로 응결하는 과정이므로, 숨은열(잠열)을 방출하여 주변 공기를 데우는 효과가 있습니다." },
+            { id: 80, type: 'fill-in', text: "80. 식물의 잎의 증산 작용을 통한 물의 이동은 ( )에서 ( )으로 이동", answer: "생물권;기권", options: ["지권;생물권", "수권;생물권", "생물권;기권", "기권;생물권"], explanation: "식물(생물권)이 뿌리로 흡수한 물을 잎의 기공을 통해 수증기 형태로 대기(기권) 중으로 내보내는 현상입니다." },
+            { id: 81, type: 'ox', text: "81. 물이 지권에서 수권으로 이동할 때 지형이 변한다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 지하수나 강물이 흐르면서 암석을 깎아(침식), 운반, 퇴적시키며 다양한 지형을 만듭니다." },
+            { id: 82, type: 'ox', text: "82. 물이 지권에서 수권으로 이동할 때 V자 모양 계곡이나 선상지, 곡류, 삼각주 등의 지형을 볼 수 있다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 이들은 모두 흐르는 물(강물)의 침식, 운반, 퇴적 작용에 의해 만들어지는 대표적인 하천 지형입니다." },
+            { id: 83, type: 'fill-in', text: "83. 수권에서 물의 유입량 ( ) 유출량", answer: "=", options: [">", "<", "=", "≠"], explanation: "지구 전체 시스템에서 물은 순환하므로, 긴 시간 규모에서 각 권역으로 들어오는 물의 양과 나가는 물의 양은 평형을 이룹니다. 따라서 유입량과 유출량은 같습니다." },
+            { id: 84, type: 'fill-in', text: "84. 기권에서 물의 유입량 ( ) 유출량", answer: "=", options: [">", "<", "=", "≠"], explanation: "지구 전체 시스템에서 물은 순환하므로, 긴 시간 규모에서 각 권역으로 들어오는 물의 양과 나가는 물의 양은 평형을 이룹니다. 따라서 유입량과 유출량은 같습니다." },
+            { id: 85, type: 'fill-in', text: "85. 지권에서 물의 유입량 ( ) 유출량", answer: "=", options: [">", "<", "=", "≠"], explanation: "지구 전체 시스템에서 물은 순환하므로, 긴 시간 규모에서 각 권역으로 들어오는 물의 양과 나가는 물의 양은 평형을 이룹니다. 따라서 유입량과 유출량은 같습니다." },
+            { id: 86, type: 'fill-in', text: "86. 육지는 증발량 ( ) 강수량 이지만, 강물을 통해 바다로 이동하기 때문에 유입량과 유출량은 항상 같다.", answer: "<", options: [">", "<", "=", "≠"], explanation: "육지에서는 증발량보다 강수량이 더 많습니다. 이 남는 물이 강물이나 지하수가 되어 바다로 흘러가 전체적인 물의 평형을 맞춥니다." },
+            { id: 87, type: 'fill-in', text: "87. 탄소는 기권에서 ( ) ( )의 형태로 존재한다.", answer: "이산화탄소;메테인", options: ["산소;질소", "이산화탄소;메테인", "수증기;오존", "탄산칼슘;석회암"], explanation: "기권에서 탄소는 주로 이산화탄소(CO₂)와 메테인(CH₄)과 같은 온실 기체의 형태로 존재합니다." },
+            { id: 88, type: 'fill-in', text: "88. 탄소는 지권에서 ( ) ( )의 형태로 존재한다.", answer: "탄산칼슘;화석연료", options: ["유기물;암석", "탄산이온;용존탄소", "탄산칼슘;화석연료", "이산화탄소;메테인"], explanation: "지권에 탄소는 석회암의 주성분인 탄산칼슘(CaCO₃) 형태로 가장 많이 저장되어 있으며, 석탄, 석유와 같은 화석 연료 형태로도 존재합니다." },
+            { id: 89, type: 'fill-in', text: "89. 탄소는 수권에서 ( )의 형태로 존재한다.", answer: "탄산이온", options: ["탄산칼슘", "유기물", "이산화탄소", "탄산이온"], explanation: "대기 중의 이산화탄소가 물에 녹아 탄산(H₂CO₃)이 되고, 이것이 이온화하여 탄산수소이온(HCO₃⁻)이나 탄산이온(CO₃²⁻) 형태로 물 속에 존재합니다." },
+            { id: 90, type: 'fill-in', text: "90. 탄소는 생물권에서( )의 형태로 존재한다.", answer: "유기물", options: ["탄소", "이산화탄소", "유기물", "단백질"], explanation: "생물권에서 탄소는 탄수화물, 단백질, 지방과 같이 생명체를 구성하는 다양한 유기물의 기본 골격으로 존재합니다." },
+            { id: 91, type: 'fill-in', text: "91. 탄소는 ( )에 ( )형태로 가장 많이 존재한다.", answer: "지권;석회암", options: ["기권;이산화탄소", "수권;탄산이온", "지권;석회암", "생물권;유기물"], explanation: "지구 전체의 탄소 중 대부분은 지권에 석회암(탄산칼슘)의 형태로 저장되어 있습니다." },
+            { id: 92, type: 'fill-in', text: "92. 호흡은 탄소가 ( )에서 ( )으로 이동하는 것이다.", answer: "생물권;기권", options: ["기권;생물권", "생물권;기권", "생물권;지권", "지권;기권"], explanation: "생물(생물권)이 호흡을 통해 유기물을 분해하고 이산화탄소를 대기(기권)로 방출하는 과정입니다." },
+            { id: 93, type: 'fill-in', text: "93. 광합성은 탄소가 ( )에서 ( )으로 이동하는 것이다.", answer: "기권;생물권", options: ["기권;생물권", "생물권;기권", "수권;생물권", "생물권;수권"], explanation: "식물(생물권)이 대기(기권) 중의 이산화탄소를 흡수하여 포도당과 같은 유기물을 합성하는 과정입니다." },
+            { id: 94, type: 'ox', text: "94. 광합성을 할 때 에너지는 생물권으로 들어간다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 광합성은 태양의 빛에너지를 화학 에너지로 전환하여 유기물(포도당) 속에 저장하는 과정입니다. 즉, 에너지가 생물권으로 유입됩니다." },
+            { id: 95, type: 'fill-in', text: "95. 화석연료의 연소는 탄소가 ( )에서 ( )으로 이동하는 것이다.", answer: "지권;기권", options: ["기권;지권", "지권;기권", "생물권;기권", "지권;생물권"], explanation: "석탄, 석유와 같은 화석연료(지권)를 태우면 이산화탄소가 발생하여 대기(기권)로 이동합니다." },
+            { id: 96, type: 'fill-in', text: "96. 화산활동은 탄소가 ( )에서 ( )으로 이동하는 것이다.", answer: "지권;기권", options: ["기권;지권", "지권;기권", "수권;기권", "지권;수권"], explanation: "화산이 분출할 때 지구 내부(지권)에 있던 화산가스에 포함된 이산화탄소가 대기(기권)로 방출됩니다." },
+            { id: 97, type: 'ox', text: "97. 지구를 구성하는 각 권역은 끊임없이 상호작용을 한다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 지구 시스템의 각 권(기권, 수권, 지권, 생물권, 외권)은 서로 영향을 주고받으며 물질과 에너지를 교환합니다." },
+            { id: 98, type: 'fill-in', text: "98. 파도에 의해 바닷가의 바위가 깎이는 것은 수권과 ( )사이의 상호작용이다.", answer: "지권", options: ["기권", "생물권", "지권", "외권"], explanation: "파도(수권)가 해안의 암석(지권)을 침식시켜 해안 지형을 변화시키는 것은 수권과 지권의 상호작용입니다." },
+            { id: 99, type: 'ox', text: "99. 해류는 대부분 지권과 수권의 상호작용으로 발생한다.", answer: "X", options: ["O", "X"], explanation: "해류는 주로 지속적으로 부는 바람에 의해 발생하므로, '기권'과 수권의 상호작용이 주된 원인입니다." },
+            { id: 100, type: 'ox', text: "100. 물의 순환은 주로 지구 내부 에너지에 의해 일어난다.", answer: "X", options: ["O", "X"], explanation: "물의 순환을 일으키는 주된 에너지원은 물을 증발시키는 '태양 복사 에너지'입니다." },
+            { id: 101, type: 'ox', text: "101. 강물에 의해 지형이 변하는 것은 수권과 지권의 상호작용이다.", answer: "O", options: ["O", "X"], explanation: "맞습니다. 강물(수권)이 흐르면서 땅(지권)을 깎고 운반, 퇴적시키며 지형을 변화시킵니다." },
+            { id: 102, type: 'fill-in', text: "102. 기권에서 수증기는 에너지를 ( )하면서 응결해 구름이 된다.", answer: "방출", options: ["흡수", "방출", "생성", "차단"], explanation: "기체인 수증기가 액체인 물방울(구름)로 응결할 때, 숨은열(잠열)을 방출합니다. 이 에너지는 태풍의 에너지원이 되기도 합니다." }
+        ];
+
+        // 명언 목록
+        const motivationalQuotes = [
+            "오늘의 노력이 내일의 너를 만든다.", "포기하지 않는 한, 실패는 없다.", "가장 큰 위험은 아무 위험도 감수하지 않는 것이다.",
+            "배움은 의무도, 생존도 아니다. 그것은 우리의 가장 큰 특권이다.", "성공은 최종 목적지가 아니며, 실패는 치명적이지 않다. 중요한 것은 계속 나아가는 용기다.",
+            "작은 성공들이 모여 큰 성공을 이룬다.", "어제보다 나은 오늘, 오늘보다 나은 내일을 만들자.",
+            "가장 큰 영광은 한 번도 실패하지 않음이 아니라 실패할 때마다 다시 일어서는 데에 있다.", "천리길도 한 걸음부터.", "노력은 결코 배신하지 않는다."
+        ];
+
+        const quizElement = document.getElementById('quiz');
+        const paginationControlsElement = document.getElementById('pagination-controls');
+        const submitPageButton = document.getElementById('submit-page-btn');
+        const scoreSectionElement = document.getElementById('score-section');
+        const currentPageScoreTextElement = document.getElementById('current-page-score-text');
+        const totalScoreTextElement = document.getElementById('total-score-text');
+        const pageInfoElement = document.getElementById('page-info');
+        const quizMainTitleDisplayElement = document.getElementById('quiz-main-title-in-score');
+        const motivationalQuoteElement = document.getElementById('motivational-quote');
+        
+        const welcomePopup = document.getElementById('welcome-popup');
+        const popupPasswordInput = document.getElementById('popup-password');
+        const popupConfirmButton = document.getElementById('popup-confirm');
+        const popupErrorMessage = document.getElementById('popup-error');
+
+        const correctPassword = "0407";
+
+        const questionsPerPage = 10;
+        let currentPage = 0;
+        let pageScores = [];
+        let pageAttempted = [];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function initializeQuizData() {
+            questions.forEach(q => {
+                q.userAnswer = null;
+                q.isCorrect = null;
+                q.attemptedThisSession = false;
+                if (q.answer && q.answer.includes(';')) {
+                    q.answersArray = q.answer.split(';');
+                } else if (q.answer) {
+                    q.answersArray = [q.answer];
+                } else {
+                    q.answersArray = [];
+                }
+                if (q.type !== 'ox') {
+                   shuffleArray(q.options);
+                }
+            });
+            const numPages = Math.ceil(questions.length / questionsPerPage);
+            pageAttempted = new Array(numPages).fill(false);
+            pageScores = new Array(numPages).fill(0);
+        }
+
+        function renderQuestionsForPage(page) {
+            quizElement.innerHTML = '';
+            currentPage = page;
+
+            const start = page * questionsPerPage;
+            const end = Math.min(start + questionsPerPage, questions.length);
+            const questionsOnPage = questions.slice(start, end);
+
+            pageInfoElement.textContent = `총 ${questions.length}문제 중 ${start + 1} - ${end}번 문제`;
+
+            questionsOnPage.forEach((q, indexOnPage) => {
+                const questionCard = document.createElement('div');
+                questionCard.classList.add('question-card');
+                questionCard.id = `question-${q.id}`;
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                let processedText = q.text.replace(/\d+\.\s*/, (match) => `<span class="font-bold">${match}</span>`);
+                
+                processedText = processedText.replace(/(\(\s*\))/g, '<span class="blank-emphasis">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span>');
+                
+                // Handle multiple blanks
+                let blankIndex = 0;
+                processedText = processedText.replace(/<span class="blank-emphasis">\( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \)<\/span>/g, () => {
+                    if (q.answersArray && q.answersArray.length > 1 && q.answersArray[blankIndex]) {
+                        const blankText = `( ${"&nbsp;".repeat(q.answersArray[blankIndex].length * 2)} )`;
+                        blankIndex++;
+                        return `<span class="blank-emphasis">${blankText}</span>`;
+                    }
+                    return '<span class="blank-emphasis">( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )</span>';
+                });
+
+                questionText.innerHTML = processedText;
+                questionCard.appendChild(questionText);
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.classList.add('options');
+
+                q.options.forEach((option, index) => {
+                    const optionId = `q${q.id}-option-${index}`;
+                    
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = `question-${q.id}`;
+                    radioInput.value = option;
+                    radioInput.classList.add('option-input', 'hidden');
+                    if (q.userAnswer === option) radioInput.checked = true;
+                    if (pageAttempted[currentPage]) radioInput.disabled = true;
+
+                    const optionLabel = document.createElement('label');
+                    optionLabel.htmlFor = optionId;
+                    optionLabel.innerHTML = option.includes(';') ? option.split(';').join(', ') : option;
+                    optionLabel.classList.add('option-label');
+                    if (pageAttempted[currentPage]) optionLabel.classList.add('opacity-70', 'cursor-not-allowed');
+
+                    optionsContainer.appendChild(radioInput);
+                    optionsContainer.appendChild(optionLabel);
+                });
+                questionCard.appendChild(optionsContainer);
+
+                const feedbackElement = document.createElement('div');
+                feedbackElement.classList.add('feedback');
+                feedbackElement.style.display = 'none';
+                questionCard.appendChild(feedbackElement);
+                
+                if (pageAttempted[currentPage] && q.attemptedThisSession) {
+                    showFeedbackForQuestion(q, questionCard);
+                }
+                quizElement.appendChild(questionCard);
+            });
+
+            const numPages = Math.ceil(questions.length / questionsPerPage);
+            if (numPages > 1) {
+                paginationControlsElement.style.display = 'flex';
+                renderPaginationControls();
+            } else {
+                paginationControlsElement.style.display = 'none';
+            }
+
+            submitPageButton.disabled = pageAttempted[currentPage];
+            if (pageAttempted[currentPage]) {
+                submitPageButton.textContent = '채점 완료';
+                scoreSectionElement.style.display = 'block';
+                updateScoreDisplay();
+                showMotivationalQuote();
+            } else {
+                submitPageButton.textContent = '이번 페이지 채점하기';
+                motivationalQuoteElement.style.display = 'none';
+                if (questionsOnPage.length > 0) {
+                    scoreSectionElement.style.display = 'none';
+                } else {
+                    scoreSectionElement.style.display = 'block';
+                    currentPageScoreTextElement.textContent = '이번 페이지에 문제가 없습니다.';
+                    totalScoreTextElement.textContent = '';
+                }
+            }
+        }
+        
+        function showFeedbackForQuestion(question, questionCard) {
+            const feedbackElement = questionCard.querySelector('.feedback');
+            if (!feedbackElement) return;
+
+            feedbackElement.innerHTML = '';
+            const correctAnswerText = question.answersArray.join(', ');
+
+            if (question.isCorrect) {
+                feedbackElement.innerHTML = '<strong class="font-semibold">정답입니다!</strong> 🎉';
+                feedbackElement.className = 'feedback correct';
+            } else {
+                feedbackElement.innerHTML = `<strong class="font-semibold">오답입니다.</strong> 정답은 "<span class="font-bold text-red-700">${correctAnswerText}</span>"입니다.`;
+                feedbackElement.className = 'feedback incorrect';
+            }
+
+            const explanationElement = document.createElement('p');
+            explanationElement.classList.add('explanation');
+            explanationElement.innerHTML = `<strong class="font-semibold">해설:</strong> ${question.explanation}`;
+            feedbackElement.appendChild(explanationElement);
+            feedbackElement.style.display = 'block';
+        }
+
+        function renderPaginationControls() {
+            paginationControlsElement.innerHTML = '';
+            const numPages = Math.ceil(questions.length / questionsPerPage);
+
+            const prevButton = document.createElement('button');
+            prevButton.textContent = '이전';
+            prevButton.disabled = currentPage === 0;
+            prevButton.onclick = () => renderQuestionsForPage(currentPage - 1);
+            paginationControlsElement.appendChild(prevButton);
+
+            for (let i = 0; i < numPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i + 1;
+                pageButton.classList.add('page-number');
+                if (i === currentPage) {
+                    pageButton.classList.add('current');
+                }
+                pageButton.onclick = () => renderQuestionsForPage(i);
+                paginationControlsElement.appendChild(pageButton);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = '다음';
+            nextButton.disabled = currentPage === numPages - 1;
+            nextButton.onclick = () => renderQuestionsForPage(currentPage + 1);
+            paginationControlsElement.appendChild(nextButton);
+        }
+
+        function showMotivationalQuote() {
+            const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+            motivationalQuoteElement.textContent = motivationalQuotes[randomIndex];
+            motivationalQuoteElement.style.display = 'block';
+        }
+
+        submitPageButton.addEventListener('click', () => {
+            if (pageAttempted[currentPage]) return;
+
+            let scoreForThisPage = 0;
+            
+            const start = currentPage * questionsPerPage;
+            const end = Math.min(start + questionsPerPage, questions.length);
+            const questionsOnPage = questions.slice(start, end);
+
+            questionsOnPage.forEach((q, indexOnPage) => {
+                const questionCard = quizElement.children[indexOnPage];
+                const selectedOptionInput = questionCard.querySelector(`input[name="question-${q.id}"]:checked`);
+                
+                q.attemptedThisSession = true;
+
+                if (selectedOptionInput) {
+                    q.userAnswer = selectedOptionInput.value;
+                    q.isCorrect = (q.userAnswer === q.answer);
+                    
+                    if (q.isCorrect) {
+                        scoreForThisPage++;
+                    }
+                    showFeedbackForQuestion(q, questionCard);
+
+                    const radioInputs = questionCard.querySelectorAll('input[type="radio"]');
+                    radioInputs.forEach(input => input.disabled = true);
+                } else {
+                    const feedbackElement = questionCard.querySelector('.feedback');
+                    feedbackElement.textContent = '답을 선택하지 않았습니다.';
+                    feedbackElement.className = 'feedback incorrect';
+                    feedbackElement.style.display = 'block';
+                    q.isCorrect = false;
+                }
+            });
+            
+            pageScores[currentPage] = scoreForThisPage;
+            pageAttempted[currentPage] = true;
+            submitPageButton.disabled = true;
+            submitPageButton.textContent = '채점 완료';
+            
+            scoreSectionElement.style.display = 'block';
+            updateScoreDisplay();
+            showMotivationalQuote();
+
+            const quizContainerElement = document.querySelector('.quiz-container');
+            if (quizContainerElement) {
+                quizContainerElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+        function updateScoreDisplay() {
+            const questionsOnThisPageCount = Math.min(questionsPerPage, questions.length - (currentPage * questionsPerPage));
+            currentPageScoreTextElement.textContent = `이번 페이지 점수: ${pageScores[currentPage]} / ${questionsOnThisPageCount}`;
+            
+            let currentTotalScore = 0;
+            let currentTotalAttemptedQuestions = 0;
+            for(let i=0; i < pageAttempted.length; i++){
+                if(pageAttempted[i]){
+                    const start = i * questionsPerPage;
+                    const end = Math.min(start + questionsPerPage, questions.length);
+                    currentTotalAttemptedQuestions += (end-start);
+                    currentTotalScore += pageScores[i];
+                }
+            }
+
+            const quizTitleElement = document.querySelector('h1');
+            let quizMainTitle = "현재 단원";
+            if (quizTitleElement) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = quizTitleElement.innerHTML;
+                quizMainTitle = tempDiv.textContent || tempDiv.innerText || "";
+                const titleParts = quizMainTitle.split('(');
+                if (titleParts.length > 0) {
+                    quizMainTitle = titleParts[0].trim();
+                }
+            }
+            
+            if (quizMainTitleDisplayElement) {
+                quizMainTitleDisplayElement.textContent = quizMainTitle;
+            }
+
+            if (currentTotalAttemptedQuestions > 0) {
+                 totalScoreTextElement.style.display = 'block';
+                 totalScoreTextElement.textContent = `총 누적 점수: ${currentTotalScore} / ${currentTotalAttemptedQuestions}`;
+            } else {
+                 totalScoreTextElement.style.display = 'none';
+            }
+        }
+        
+        // 팝업 기능
+        window.onload = () => {
+            if (welcomePopup) {
+                // 각 퀴즈 페이지마다 고유한 sessionStorage 키 사용
+                const popupSessionKey = 'appiaQuizPasswordEntered_bokja_earth_system';
+                const popupShownThisSession = sessionStorage.getItem(popupSessionKey);
+                if (!popupShownThisSession) {
+                    welcomePopup.classList.add('show');
+                } else {
+                    initializeQuizData();
+                    renderQuestionsForPage(0);
+                }
+            } else {
+                initializeQuizData();
+                renderQuestionsForPage(0);
+            }
+        };
+
+        if (popupConfirmButton) {
+            popupConfirmButton.addEventListener('click', () => {
+                if (popupPasswordInput.value === correctPassword) {
+                    if (welcomePopup) {
+                        welcomePopup.classList.remove('show');
+                    }
+                    const popupSessionKey = 'appiaQuizPasswordEntered_bokja_earth_system';
+                    sessionStorage.setItem(popupSessionKey, 'true');
+                    initializeQuizData();
+                    renderQuestionsForPage(0);
+                } else {
+                    if (popupErrorMessage) {
+                        popupErrorMessage.textContent = "비밀번호가 틀렸습니다. 다시 시도해주세요.";
+                    }
+                    popupPasswordInput.value = '';
+                    popupPasswordInput.focus();
+                }
+            });
+        }
+        
+        if (popupPasswordInput) {
+            popupPasswordInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    popupConfirmButton.click();
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>
