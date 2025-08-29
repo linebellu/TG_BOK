@@ -7,10 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Jeju Love Letter -->
-    <!-- Application Structure Plan: 사용자의 여행 계획 수립을 돕기 위해 기능별로 탭을 분리한 대시보드형 SPA입니다. 1) '맛집 탐색': 필터링 가능한 카드 뷰로 전체 리스트를 자유롭게 탐색합니다. 2) '카테고리별 비교': 흑돼지, 해산물 등 동일 카테고리 맛집들을 표로 비교하여 메뉴 선택을 돕습니다. 3) '지도에서 위치 보기': 제주도 지도 위에 모든 맛집의 위치를 시각적으로 표시하여 동선 계획을 용이하게 합니다. 4) '우리의 맛집 취향': 선택된 맛집들의 데이터를 차트로 분석하여 우리의 여행 스타일을 재미있게 파악할 수 있도록 합니다. 이 구조는 방대한 정보를 사용자가 목적에 맞게 효율적으로 활용하여, 여자친구와 함께 즐겁게 여행 계획을 세울 수 있도록 설계되었습니다. -->
-    <!-- Visualization & Content Choices: 각 맛집 정보는 카드 형태로 제공하며, 클릭 시 상세 정보 모달이 나타납니다. 불안정한 이미지 링크 대신, '사진 보기' 버튼을 통해 실제 방문객의 다양한 리뷰 사진을 볼 수 있는 네이버 이미지 검색 결과로 연결하여 신뢰성과 정보량을 모두 확보했습니다(목표: 정보). 카테고리/지역별 동적 필터링, 정렬 가능한 비교 테이블(HTML), Chart.js를 이용한 데이터 시각화, 지도 위 아이콘 표시 등 모든 요소는 사용자가 직관적으로 정보를 탐색하고 비교하며 여행 계획을 세울 수 있도록 지원합니다. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -120,20 +116,20 @@
             <section id="compare-view" class="hidden">
                  <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                      <p class="text-gray-700 text-center leading-relaxed">
-                        "흑돼지는 어디가 좋을까?", "고등어회는 여기가 괜찮을까?" 고민될 때 여기를 봐! 음식 종류별로 맛집들을 모아놨어. 대표 메뉴랑 가격, 한줄평을 비교해보면서 우리한테 딱 맞는 곳을 골라보자.
-                    </p>
-                </div>
-                <div id="compare-tables" class="space-y-12"></div>
+                         "흑돼지는 어디가 좋을까?", "고등어회는 여기가 괜찮을까?" 고민될 때 여기를 봐! 음식 종류별로 맛집들을 모아놨어. 대표 메뉴랑 가격, 한줄평을 비교해보면서 우리한테 딱 맞는 곳을 골라보자.
+                     </p>
+                 </div>
+                 <div id="compare-tables" class="space-y-12"></div>
             </section>
             
             <section id="map-view" class="hidden">
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                      <p class="text-gray-700 text-center leading-relaxed">
-                        우리가 갈 맛집들이 제주도 어디에 있는지 지도에 표시해봤어. 이걸로 여행 동선 짜면 정말 편할거야! 아이콘에 마우스를 올리면 이름이 보이고, 클릭하면 자세한 정보가 나와.
-                    </p>
+                         우리가 갈 맛집들이 제주도 어디에 있는지 지도에 표시해봤어. 이걸로 여행 동선 짜면 정말 편할거야! 아이콘에 마우스를 올리면 이름이 보이고, 클릭하면 자세한 정보가 나와.
+                     </p>
                 </div>
                 <div id="map-container" class="relative w-full max-w-4xl mx-auto">
-                    <img src="https://i.imgur.com/Q3fB63m.jpeg" alt="제주도 지도" class="w-full h-auto rounded-lg shadow-lg">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Map_Jeju-do.svg/1280px-Map_Jeju-do.svg.png" alt="제주도 지도" class="w-full h-auto rounded-lg shadow-lg">
                     <div id="map-markers"></div>
                 </div>
             </section>
@@ -141,23 +137,23 @@
             <section id="insights-view" class="hidden">
                  <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                      <p class="text-gray-700 text-center leading-relaxed">
-                        우리가 고른 맛집들을 보니까 우리의 취향이 보이네! 어떤 종류의 음식을 가장 좋아하는지, 어느 지역에 많이 가고 싶어하는지 차트로 만들어봤어. 재미로 한번 봐봐!
-                    </p>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-xl font-semibold text-center mb-4">우리의 맛집 카테고리</h3>
-                        <div class="chart-container">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-xl font-semibold text-center mb-4">선호 지역 분포</h3>
-                        <div class="chart-container">
-                            <canvas id="regionChart"></canvas>
-                        </div>
-                    </div>
-                </div>
+                         우리가 고른 맛집들을 보니까 우리의 취향이 보이네! 어떤 종류의 음식을 가장 좋아하는지, 어느 지역에 많이 가고 싶어하는지 차트로 만들어봤어. 재미로 한번 봐봐!
+                     </p>
+                 </div>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                     <div class="bg-white p-6 rounded-xl shadow-md">
+                         <h3 class="text-xl font-semibold text-center mb-4">우리의 맛집 카테고리</h3>
+                         <div class="chart-container">
+                             <canvas id="categoryChart"></canvas>
+                         </div>
+                     </div>
+                     <div class="bg-white p-6 rounded-xl shadow-md">
+                         <h3 class="text-xl font-semibold text-center mb-4">선호 지역 분포</h3>
+                         <div class="chart-container">
+                             <canvas id="regionChart"></canvas>
+                         </div>
+                     </div>
+                 </div>
             </section>
         </main>
     </div>
@@ -243,14 +239,14 @@
                     card.innerHTML = `
                         <div class="p-4 flex flex-col flex-grow">
                              <div class="flex justify-between items-start">
-                                <h3 class="text-lg font-bold text-gray-800">${d.icon} ${d.name}</h3>
-                                <span class="text-sm font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${d.region}</span>
-                            </div>
-                            <p class="text-gray-600 mt-2 text-sm">1️⃣ ${d.menu1}</p>
-                            <p class="text-gray-600 mt-1 text-sm">2️⃣ ${d.menu2}</p>
-                            <div class="mt-3 bg-gray-50 p-2 rounded-lg flex-grow">
-                                <p class="text-xs text-gray-700">💬 "${d.review}"</p>
-                            </div>
+                                 <h3 class="text-lg font-bold text-gray-800">${d.icon} ${d.name}</h3>
+                                 <span class="text-sm font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${d.region}</span>
+                             </div>
+                             <p class="text-gray-600 mt-2 text-sm">1️⃣ ${d.menu1}</p>
+                             <p class="text-gray-600 mt-1 text-sm">2️⃣ ${d.menu2}</p>
+                             <div class="mt-3 bg-gray-50 p-2 rounded-lg flex-grow">
+                                 <p class="text-xs text-gray-700">💬 "${d.review}"</p>
+                             </div>
                         </div>
                         <div class="p-3 bg-gray-50 border-t">
                             <button class="w-full bg-[#B08968] text-white py-2 rounded-lg hover:bg-[#9C6644] transition-colors" onclick="window.open('${d.photo1}', '_blank')">실제 리뷰 사진 보기</button>
