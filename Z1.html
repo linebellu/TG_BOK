@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>그녀를 위한 완-벽한 제주 맛집 가이드 (진짜 최종본)</title>
+    <title>그녀를 위한 완벽한 제주 맛집 가이드 (지도 수정본)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Jeju Love Letter -->
     <!-- Application Structure Plan: 사용자의 여행 계획 수립을 돕기 위해 기능별로 탭을 분리한 대시보드형 SPA입니다. 1) '맛집 탐색': 필터링 가능한 카드 뷰로 전체 리스트를 자유롭게 탐색합니다. 2) '카테고리별 비교': 흑돼지, 해산물 등 동일 카테고리 맛집들을 표로 비교하여 메뉴 선택을 돕습니다. 3) '지도에서 위치 보기': 제주도 지도 위에 모든 맛집의 위치를 시각적으로 표시하여 동선 계획을 용이하게 합니다. 4) '우리의 맛집 취향': 선택된 맛집들의 데이터를 차트로 분석하여 우리의 여행 스타일을 재미있게 파악할 수 있도록 합니다. 이 구조는 방대한 정보를 사용자가 목적에 맞게 효율적으로 활용하여, 여자친구와 함께 즐겁게 여행 계획을 세울 수 있도록 설계되었습니다. -->
-    <!-- Visualization & Content Choices: 각 맛집 정보는 사진을 포함한 카드 형태로 제공하며, 클릭 시 영업시간, 주소 등 상세 정보가 담긴 모달창이 나타납니다(목표: 정보 제공). 카테고리(흑돼지, 해산물, 분식, 한식)와 지역별 동적 필터링 기능을 구현했습니다(목표: 탐색/정리). 카테고리별 핵심 정보를 정렬 가능한 HTML 표로 만들어 직접적인 비교를 용이하게 했습니다(목표: 비교). 맛집 카테고리 분포(파이 차트), 지역별 분포(막대 차트)를 Chart.js로 시각화하여 데이터 기반의 빠른 이해를 돕습니다(목표: 정보). 제주 지도 이미지 위에 각 맛집의 위치를 아이콘으로 표시하여 직관적인 동선 파악을 가능하게 했습니다. 모든 시각적 요소는 칭찬받고 싶은 사용자의 목표 달성을 위해, 쉽고 아름답고 유용하게 설계되었습니다. -->
+    <!-- Visualization & Content Choices: 각 맛집 정보는 카드 형태로 제공하며, 클릭 시 상세 정보 모달이 나타납니다. 불안정한 이미지 링크 대신, '사진 보기' 버튼을 통해 실제 방문객의 다양한 리뷰 사진을 볼 수 있는 네이버 이미지 검색 결과로 연결하여 신뢰성과 정보량을 모두 확보했습니다(목표: 정보). 카테고리/지역별 동적 필터링, 정렬 가능한 비교 테이블(HTML), Chart.js를 이용한 데이터 시각화, 지도 위 아이콘 표시 등 모든 요소는 사용자가 직관적으로 정보를 탐색하고 비교하며 여행 계획을 세울 수 있도록 지원합니다. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -83,7 +83,7 @@
     <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-[#7F5539] mb-2">To. My Girlfriend ❤️</h1>
-            <p class="text-lg text-gray-600">우리가 함께 갈 제주 맛집들, 내가 다 정리했어!</p>
+            <p class="text-lg text-gray-600">우리가 함께 갈 제주 맛집들, 내가 완벽하게 다시 정리했어!</p>
         </header>
 
         <nav class="flex justify-center border-b border-yellow-800/20 mb-8 space-x-2 sm:space-x-4 md:space-x-8">
@@ -97,7 +97,7 @@
             <section id="explore-view">
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                     <p class="text-gray-700 text-center leading-relaxed">
-                        네가 가고 싶다고 했던 제주 맛집 리스트야! 우리가 뭘 먹으면 가장 행복할지, 어디부터 가면 좋을지 쉽게 볼 수 있도록 정리해봤어. 아래 필터로 편하게 찾아보고, 카드를 눌러서 자세한 정보도 확인해봐.
+                        네가 가고 싶다고 했던 제주 맛집 리스트야! 필터로 편하게 찾아보고, 카드를 눌러서 자세한 정보를 확인해봐. <br class="hidden sm:block"> '사진 보기'를 누르면 다른 사람들이 올린 실제 음식 사진들을 볼 수 있어!
                     </p>
                 </div>
                 <div id="filters" class="mb-8 space-y-6">
@@ -109,6 +109,7 @@
                             <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="해산물">🦞 해산물</button>
                             <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="한식/해장국">🍲 한식&해장국</button>
                             <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="분식/기타">🍙 분식&기타</button>
+                             <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="카페/디저트">🍰 카페/디저트</button>
                         </div>
                     </div>
                 </div>
@@ -132,7 +133,7 @@
                     </p>
                 </div>
                 <div id="map-container" class="relative w-full max-w-4xl mx-auto">
-                    <img src="https://i.imgur.com/sC3dC2F.png" alt="제주도 지도" class="w-full h-auto rounded-lg shadow-lg">
+                    <img src="https://i.imgur.com/Q3fB63m.jpeg" alt="제주도 지도" class="w-full h-auto rounded-lg shadow-lg">
                     <div id="map-markers"></div>
                 </div>
             </section>
@@ -175,49 +176,49 @@
 
     <script>
         const restaurantData = [
-            // 분식/기타
-            { id: 1, name: "아라찐빵", category: "분식/기타", region: "북부", menu: "찐빵, 꽈배기", price: "1만원 미만", review: "촉촉하고 부드러운 찐빵의 정석. 옛날 감성 그대로, 현지인 추천 맛집.", hours: "09:00 - 18:00 (재료 소진 시 마감)", address: "제주시 인다1길 12", photo: "https://source.unsplash.com/600x400/?korean,steamed,bun", map: {x: '42%', y: '30%'}, icon: '🥟'},
-            { id: 2, name: "오는정김밥", category: "분식/기타", region: "남부", menu: "오는정김밥", price: "1만원 미만", review: "튀긴 유부가 신의 한 수! 예약 없이는 절대 맛볼 수 없는 제주의 명물 김밥.", hours: "10:00 - 20:00 (전화 예약 필수)", address: "서귀포시 동문동로 2", photo: "https://source.unsplash.com/600x400/?gimbap,korean,food", map: {x: '55%', y: '89%'}, icon: '🍙'},
-            { id: 3, name: "명랑스낵", category: "분식/기타", region: "서부", menu: "흑돼지튀김, 떡볶이", price: "1~2만원대", review: "협재해변 뷰와 함께 즐기는 분식. 바삭한 흑돼지튀김과 맥주는 환상의 조합.", hours: "11:30 - 19:30 (브레이크타임 있음)", address: "제주시 한림읍 한림로 1480", photo: "https://source.unsplash.com/600x400/?tteokbokki,fried,pork", map: {x: '15%', y: '45%'}, icon: '🍤'},
-            { id: 4, name: "제주시새우리", category: "분식/기타", region: "북부", menu: "딱새우김밥", price: "1만원 미만", review: "통통한 딱새우튀김이 통째로! 공항 근처라 포장해서 여행 시작하기 좋음.", hours: "09:00 - 20:30", address: "제주시 무근성7길 24", photo: "https://source.unsplash.com/600x400/?shrimp,gimbap", map: {x: '38%', y: '22%'}, icon: '🦐'},
-
+            // 분식/기타 & 카페
+            { id: 1, name: "아라찐빵", category: "분식/기타", region: "북부", menu1: "찐빵", price1: "1,000원", photo1: "https://search.naver.com/search.naver?where=image&query=아라찐빵+찐빵", menu2: "꽈배기", price2: "1,000원", photo2: "https://search.naver.com/search.naver?where=image&query=아라찐빵+꽈배기", review: "제주 현지인들이 인정하는 숨은 맛집. 팥소가 너무 달지 않고 피가 쫀득쫀득해서 남녀노소 모두 좋아한다.", hours: "09:00 - 18:00 (일요일 휴무)", address: "제주시 인다1길 12", map: {x: '42%', y: '30%'}, icon: '🥟'},
+            { id: 2, name: "오는정김밥", category: "분식/기타", region: "남부", menu1: "오는정김밥", price1: "3,500원", photo1: "https://search.naver.com/search.naver?where=image&query=오는정김밥", menu2: "치즈김밥", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=오는정김밥+치즈김밥", review: "전국구 명성의 김밥. 바삭하게 튀긴 유부가 들어가 독특한 식감과 고소한 맛을 낸다. 전화 예약 필수.", hours: "10:00 - 20:00 (일요일 휴무)", address: "서귀포시 동문동로 2", map: {x: '55%', y: '89%'}, icon: '🍙'},
+            { id: 3, name: "풀베개", category: "카페/디저트", region: "남부", menu1: "당근 케이크", price1: "7,500원", photo1: "https://search.naver.com/search.naver?where=image&query=풀베개+당근케이크", menu2: "흑임자갸또", price2: "7,500원", photo2: "https://search.naver.com/search.naver?where=image&query=풀베개+흑임자갸또", review: "조용한 주택가에 위치한 디저트 카페. 꾸덕하고 진한 크림치즈와 시나몬 향이 매력적인 당근 케이크가 가장 유명하다.", hours: "11:00 - 19:00 (수요일 휴무)", address: "서귀포시 이어도로595번길 20-3", map: {x: '44%', y: '89%'}, icon: '🍰'},
+            { id: 4, name: "점점", category: "해산물", region: "서부", menu1: "통돌문어 해물라면", price1: "18,000원", photo1: "https://search.naver.com/search.naver?where=image&query=점점+통돌문어+해물라면", menu2: "흑돼지 왕돈까스", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=점점+흑돼지+왕돈까스", review: "돌문어 한 마리가 통째로 들어간 압도적인 비주얼의 해물라면이 시그니처 메뉴. 판포포구 뷰도 훌륭하다.", hours: "09:00 - 18:00 (화요일 휴무)", address: "제주시 한경면 판포1길 2", map: {x: '8%', y: '50%'}, icon: '🐙'},
+            { id: 5, name: "명랑스낵", category: "분식/기타", region: "서부", menu1: "흑돼지 튀김", price1: "9,000원", photo1: "https://search.naver.com/search.naver?where=image&query=명랑스낵+흑돼지튀김", menu2: "한치 튀김", price2: "9,000원", photo2: "https://search.naver.com/search.naver?where=image&query=명랑스낵+한치튀김", review: "협재해변 바로 앞에 위치한 분식집. 바삭하고 고소한 흑돼지 튀김이 맥주와 잘 어울린다.", hours: "11:30 - 19:30 (수요일 휴무)", address: "제주시 한림읍 한림로 1480", map: {x: '15%', y: '45%'}, icon: '🍤'},
+            { id: 10, name: "제주시새우리", category: "분식/기타", region: "북부", menu1: "딱새우김밥", price1: "7,500원", photo1: "https://search.naver.com/search.naver?where=image&query=제주시새우리+딱새우김밥", menu2: "간장새우김밥", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=제주시새우리+간장새우김밥", review: "공항 근처에 위치해 포장하기 좋은 김밥 맛집. 바삭하게 튀긴 딱새우 패티가 통으로 들어가 식감과 맛이 훌륭하다.", hours: "09:00 - 20:30", address: "제주시 무근성7길 24", map: {x: '38%', y: '22%'}, icon: '🦐'},
+            
             // 해산물
-            { id: 5, name: "풀베개", category: "해산물", region: "남부", menu: "통갈치구이", price: "10만원 이상 (2인)", review: "압도적인 비주얼의 통갈치구이. 살이 부드럽고 가시 바르기 편해서 좋음.", hours: "10:00 - 21:00", address: "서귀포시 일주서로 982", photo: "https://source.unsplash.com/600x400/?grilled,fish,korean", map: {x: '35%', y: '85%'}, icon: '🐟'},
-            { id: 6, name: "점점", category: "해산물", region: "서부", menu: "해물라면", price: "1~2만원대", review: "돌문어가 통째로 들어간 비주얼 끝판왕 라면. 국물이 시원하고 칼칼함.", hours: "09:00 - 18:00 (재료 소진 시 마감)", address: "제주시 한경면 판포1길 2", photo: "https://source.unsplash.com/600x400/?seafood,ramen,octopus", map: {x: '8%', y: '50%'}, icon: '🐙'},
-            { id: 7, name: "상상 함덕점", category: "해산물", region: "북부", menu: "해물라면, 흑돼지돈까스", price: "1~2만원대", review: "함덕해변 바로 앞 오션뷰 맛집. 문어 한마리가 통째로 들어간 라면이 인기.", hours: "08:30 - 21:00", address: "제주시 조천읍 조함해안로 525", photo: "https://source.unsplash.com/600x400/?jeju,seafood,ramen", map: {x: '55%', y: '20%'}, icon: '🦀'},
-            { id: 8, name: "미영이네 조천점", category: "해산물", region: "북부", menu: "고등어회", price: "5~7만원대", review: "본점의 명성 그대로! 비린맛 없이 신선하고 고소한 고등어회를 맛볼 수 있음.", hours: "16:00 - 22:00", address: "제주시 조천읍 함와로 510", photo: "https://source.unsplash.com/600x400/?mackerel,sashimi", map: {x: '58%', y: '25%'}, icon: '🐠'},
-            { id: 9, name: "만선바다", category: "해산물", region: "동부", menu: "통갈치조림, 해물전골", price: "7~10만원대", review: "푸짐한 해물과 갈치가 들어간 조림이 일품. 밥도둑이 따로 없음.", hours: "10:00 - 22:00", address: "서귀포시 성산읍 일출로 250", photo: "https://source.unsplash.com/600x400/?braised,fish,korean,stew", map: {x: '92%', y: '60%'}, icon: '🥘'},
-            { id: 10, name: "스시마씸 월정", category: "해산물", region: "동부", menu: "제주바다스시", price: "2~4만원대", review: "월정리 바다를 보며 즐기는 스시. 제주 특산물로 만든 초밥이 특별함.", hours: "11:30 - 21:00", address: "제주시 구좌읍 월정1길 72-1", photo: "https://source.unsplash.com/600x400/?sushi,platter", map: {x: '75%', y: '22%'}, icon: '🍣'},
-            { id: 11, name: "소금바치 순이네", category: "해산물", region: "동부", menu: "돌문어볶음", price: "3~4만원대", review: "매콤달콤한 양념의 돌문어볶음이 중독성 강함. 밥 비벼 먹으면 최고.", hours: "11:00 - 21:00 (목요일 휴무)", address: "제주시 구좌읍 종달로 100", photo: "https://source.unsplash.com/600x400/?stir-fried,octopus,korean", map: {x: '88%', y: '28%'}, icon: '🌶️'},
-            { id: 12, name: "곰만식당", category: "해산물", region: "남부", menu: "갈치조림, 성게미역국", price: "3~5만원대", review: "현지인들이 많이 찾는 갈치조림 맛집. 가성비 좋고 맛도 훌륭함.", hours: "08:00 - 21:00", address: "서귀포시 중정로 53", photo: "https://source.unsplash.com/600x400/?korean,fish,stew", map: {x: '54%', y: '90%'}, icon: '🍲'},
-            { id: 13, name: "김녕오라이", category: "해산물", region: "동부", menu: "핑크뮬리크림우동", price: "1~2만원대", review: "김녕해수욕장 근처 감성 맛집. 비주얼도 예쁘고 맛도 좋은 퓨전 요리.", hours: "11:00 - 21:00", address: "제주시 구좌읍 김녕로21길 23", photo: "https://source.unsplash.com/600x400/?cream,udon,pasta", map: {x: '68%', y: '18%'}, icon: '🍝'},
-            { id: 14, name: "명진전복", category: "해산물", region: "동부", menu: "전복돌솥밥", price: "1~2만원대", review: "제주 전복돌솥밥의 원조. 고소한 내장밥과 전복의 조화가 환상적.", hours: "09:30 - 21:30 (화요일 휴무)", address: "제주시 구좌읍 해맞이해안로 1282", photo: "https://source.unsplash.com/600x400/?abalone,rice,korean", map: {x: '80%', y: '25%'}, icon: '🍚'},
-            { id: 15, name: "금자매식당", category: "해산물", region: "동부", menu: "갈치조림, 전복뚝배기", price: "2~4만원대", review: "성산일출봉 근처 가성비 맛집. 푸짐하고 맛있는 제주 가정식 백반.", hours: "07:00 - 21:00", address: "서귀포시 성산읍 성산중앙로 40", photo: "https://source.unsplash.com/600x400/?korean,seafood,stew", map: {x: '94%', y: '55%'}, icon: '🍳'},
-            { id: 16, name: "순청미향 제주산방산본점", category: "해산물", region: "남부", menu: "통갈치조림", price: "7~10만원대", review: "산방산 뷰를 보며 즐기는 통갈치조림. 다양한 곁들임 반찬도 훌륭함.", hours: "10:00 - 20:30", address: "서귀포시 안덕면 사계남로 224", photo: "https://source.unsplash.com/600x400/?korean,braised,cutlassfish", map: {x: '28%', y: '88%'}, icon: '⛰️'},
-            { id: 17, name: "미영이네", category: "해산물", region: "남부", menu: "고등어회", price: "5~7만원대", review: "고등어회의 성지. 비린맛 1도 없는 신선함의 극치. 웨이팅 감수할 가치 있음.", hours: "11:30 - 22:00", address: "서귀포시 대정읍 하모항구로 42", photo: "https://source.unsplash.com/600x400/?mackerel,sashimi,korean", map: {x: '15%', y: '88%'}, icon: '✨'},
-            { id: 18, name: "번네식당", category: "해산물", region: "남부", menu: "갈치조림, 옥돔구이", price: "3~5만원대", review: "서귀포 올레시장 근처 현지인 맛집. 진하고 칼칼한 갈치조림이 일품.", hours: "09:00 - 21:00", address: "서귀포시 중앙로79번길 5", photo: "https://source.unsplash.com/600x400/?grilled,tilefish", map: {x: '56%', y: '91%'}, icon: '🔥'},
-            { id: 19, name: "조천수산", category: "해산물", region: "북부", menu: "모듬회", price: "싯가", review: "가성비 최고의 횟집. 포장 전문으로 신선한 회를 저렴하게 즐길 수 있음.", hours: "10:00 - 20:00", address: "제주시 조천읍 신북로 231", photo: "https://source.unsplash.com/600x400/?sashimi,platter,korean", map: {x: '54%', y: '22%'}, icon: '🎏'},
-            { id: 20, name: "제주선채향", category: "해산물", region: "남부", menu: "통갈치 한상차림", price: "7~10만원대", review: "압도적인 비주얼의 통갈치 한상차림. 해산물과 곁들임 반찬이 다양해 상다리가 휠 정도.", hours: "10:30 - 21:30", address: "서귀포시 천제연로 119", photo: "https://source.unsplash.com/600x400/?korean,food,banchan", map: {x: '38%', y: '87%'}, icon: '🌊'},
+            { id: 6, name: "상상 함덕점", category: "해산물", region: "북부", menu1: "통문어 해물라면", price1: "18,000원", photo1: "https://search.naver.com/search.naver?where=image&query=상상+함덕점+통문어라면", menu2: "전복 해물라면", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=상상+함덕점+전복라면", review: "함덕해수욕장 바로 앞 오션뷰 맛집. 문어와 각종 해산물이 푸짐하게 들어가 국물이 시원하다.", hours: "08:30 - 21:00", address: "제주시 조천읍 조함해안로 525", map: {x: '55%', y: '20%'}, icon: '🦀'},
+            { id: 7, name: "미영이네 조천점", category: "해산물", region: "북부", menu1: "고등어회 (중)", price1: "70,000원", photo1: "https://search.naver.com/search.naver?where=image&query=미영이네+조천점+고등어회", menu2: "방어회 (계절)", price2: "싯가", photo2: "https://search.naver.com/search.naver?where=image&query=미영이네+조천점+방어회", review: "모슬포 본점의 명성을 그대로! 비린 맛 없이 극강의 신선함과 고소함을 자랑하는 고등어회가 일품.", hours: "16:00 - 22:00", address: "제주시 조천읍 함와로 510", map: {x: '58%', y: '25%'}, icon: '🐠'},
+            { id: 8, name: "만선바다", category: "해산물", region: "동부", menu1: "통갈치조림 (2인)", price1: "80,000원", photo1: "https://search.naver.com/search.naver?where=image&query=만선바다+통갈치조림", menu2: "해물 전골 (중)", price2: "70,000원", photo2: "https://search.naver.com/search.naver?where=image&query=만선바다+해물전골", review: "성산일출봉 근처 해산물 전문점. 기다란 통갈치와 해산물이 푸짐하게 들어간 조림이 대표 메뉴.", hours: "10:00 - 22:00", address: "서귀포시 성산읍 일출로 250", map: {x: '92%', y: '60%'}, icon: '🥘'},
+            { id: 9, name: "스시마씸 월정", category: "해산물", region: "동부", menu1: "제주바다스시", price1: "25,000원", photo1: "https://search.naver.com/search.naver?where=image&query=스시마씸+월정+제주바다스시", menu2: "커플세트", price2: "59,000원", photo2: "https://search.naver.com/search.naver?where=image&query=스시마씸+월정+커플세트", review: "월정리 해변가에 위치한 오션뷰 스시집. 제주산 활어와 딱새우 등을 활용한 특색 있는 초밥을 맛볼 수 있다.", hours: "11:30 - 21:00 (화요일 휴무)", address: "제주시 구좌읍 월정1길 72-1", map: {x: '75%', y: '22%'}, icon: '🍣'},
+            { id: 11, name: "소금바치 순이네", category: "해산물", region: "동부", menu1: "돌문어볶음 (2인)", price1: "36,000원", photo1: "https://search.naver.com/search.naver?where=image&query=소금바치+순이네+돌문어볶음", menu2: "전복 해물뚝배기", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=소금바치+순이네+해물뚝배기", review: "매콤달콤한 양념의 돌문어볶음이 매우 중독적인 맛집. 남은 양념에 볶음밥 비벼먹는 것은 필수 코스.", hours: "11:00 - 21:00 (목요일 휴무)", address: "제주시 구좌읍 종달로 100", map: {x: '88%', y: '28%'}, icon: '🌶️'},
+            { id: 12, name: "곰만식당", category: "해산물", region: "남부", menu1: "갈치조림 (중)", price1: "45,000원", photo1: "https://search.naver.com/search.naver?where=image&query=곰만식당+갈치조림", menu2: "성게미역국", price2: "12,000원", photo2: "https://search.naver.com/search.naver?where=image&query=곰만식당+성게미역국", review: "서귀포 현지인들이 추천하는 갈치조림 맛집. 합리적인 가격에 두툼하고 부드러운 갈치조림을 맛볼 수 있다.", hours: "08:00 - 21:00", address: "서귀포시 중정로 53", map: {x: '54%', y: '90%'}, icon: '🍲'},
+            { id: 13, name: "김녕오라이", category: "해산물", region: "동부", menu1: "핑크뮬리 크림우동", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=김녕오라이+핑크뮬리+크림우동", menu2: "흑돼지 바질 리조또", price2: "16,000원", photo2: "https://search.naver.com/search.naver?where=image&query=김녕오라이+흑돼지+바질+리조또", review: "김녕해수욕장 근처의 퓨전 레스토랑. 명란과 비트로 색을 낸 핑크 크림 우동의 비주얼이 독특하고 예쁘다.", hours: "11:00 - 21:00 (수요일 휴무)", address: "제주시 구좌읍 김녕로21길 23", map: {x: '68%', y: '18%'}, icon: '🍝'},
+            { id: 14, name: "명진전복", category: "해산물", region: "동부", menu1: "전복 돌솥밥", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=명진전복+전복돌솥밥", menu2: "전복 구이", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=명진전복+전복구이", review: "제주 전복 요리의 대명사. 전복 내장을 넣어 지은 고소한 밥과 쫄깃한 전복의 조화가 일품이다.", hours: "09:30 - 21:30 (화요일 휴무)", address: "제주시 구좌읍 해맞이해안로 1282", map: {x: '80%', y: '25%'}, icon: '🍚'},
+            { id: 15, name: "금자매식당", category: "해산물", region: "동부", menu1: "갈치조림 정식(2인)", price1: "35,000원", photo1: "https://search.naver.com/search.naver?where=image&query=금자매식당+갈치조림", menu2: "전복 뚝배기", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=금자매식당+전복뚝배기", review: "성산일출봉 근처 가성비 좋은 아침식사 맛집. 정갈하고 맛있는 밑반찬과 함께 푸짐한 식사를 할 수 있다.", hours: "07:00 - 21:00", address: "서귀포시 성산읍 성산중앙로 40", map: {x: '94%', y: '55%'}, icon: '🍳'},
+            { id: 16, name: "순천미향 제주산방산본점", category: "해산물", region: "남부", menu1: "통갈치조림 (2인)", price1: "79,000원", photo1: "https://search.naver.com/search.naver?where=image&query=순천미향+산방산+통갈치조림", menu2: "흑돼지 김치찜(2인)", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=순천미향+산방산+김치찜", review: "산방산이 보이는 뷰 맛집. 기다란 통갈치조림이 비주얼과 맛을 모두 잡았다. 다양한 밑반찬이 함께 제공된다.", hours: "10:00 - 20:30", address: "서귀포시 안덕면 사계남로 224", map: {x: '28%', y: '88%'}, icon: '⛰️'},
+            { id: 17, name: "미영이네", category: "해산물", region: "남부", menu1: "고등어회 (중)", price1: "70,000원", photo1: "https://search.naver.com/search.naver?where=image&query=모슬포+미영이네+고등어회", menu2: "특방어회 (계절)", price2: "싯가", photo2: "https://search.naver.com/search.naver?where=image&query=모슬포+미영이네+방어회", review: "제주 고등어회의 성지로 불리는 모슬포항의 본점. 비린 맛 없이 신선하고 기름진 고등어회를 맛볼 수 있다.", hours: "11:30 - 22:00", address: "서귀포시 대정읍 하모항구로 42", map: {x: '15%', y: '88%'}, icon: '✨'},
+            { id: 18, name: "번네식당", category: "해산물", region: "남부", menu1: "갈치조림 (소)", price1: "40,000원", photo1: "https://search.naver.com/search.naver?where=image&query=번네식당+갈치조림", menu2: "옥돔구이", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=번네식당+옥돔구이", review: "서귀포 올레시장 근처에 위치한 현지인 맛집. 진하고 칼칼한 국물의 갈치조림이 일품이다.", hours: "09:00 - 21:00", address: "서귀포시 중앙로79번길 5", map: {x: '56%', y: '91%'}, icon: '🔥'},
+            { id: 19, name: "조천수산", category: "해산물", region: "북부", menu1: "모듬회 포장 (소)", price1: "30,000원", photo1: "https://search.naver.com/search.naver?where=image&query=조천수산+모듬회", menu2: "고등어회 포장", price2: "25,000원", photo2: "https://search.naver.com/search.naver?where=image&query=조천수산+고등어회", review: "압도적인 가성비를 자랑하는 포장 전문 횟집. 저렴한 가격에 신선하고 두툼한 회를 푸짐하게 즐길 수 있다.", hours: "10:00 - 20:00", address: "제주시 조천읍 신북로 231", map: {x: '54%', y: '22%'}, icon: '🎏'},
+            { id: 20, name: "제주선채향", category: "해산물", region: "남부", menu1: "보말 칼국수", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=제주선채향+보말칼국수", menu2: "해물파전", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=제주선채향+해물파전", review: "진한 보말(바다 고둥) 내장으로 국물을 내어 깊고 고소한 맛이 일품인 칼국수 전문점.", hours: "09:00 - 20:00", address: "서귀포시 안덕면 사계해안로 17", map: {x: '27%', y: '89%'}, icon: '🌊'},
 
             // 흑돼지
-            { id: 21, name: "송당회관", category: "흑돼지", region: "동부", menu: "흑돼지 두루치기", price: "1~2만원대", review: "가성비 넘치는 흑돼지 두루치기 맛집. 볶음밥은 선택이 아닌 필수.", hours: "10:00 - 20:00", address: "제주시 구좌읍 중산간동로 2253", photo: "https://source.unsplash.com/600x400/?korean,spicy,pork,stir-fry", map: {x: '73%', y: '42%'}, icon: '🐷'},
-            { id: 22, name: "깡촌흑돼지 함덕본점", category: "흑돼지", region: "북부", menu: "흑돼지 근고기", price: "5~7만원대", review: "초벌구이 해서 나와 육즙이 살아있음. 멜젓과의 조화가 훌륭함.", hours: "12:00 - 22:00", address: "제주시 조천읍 신북로 493", photo: "https://source.unsplash.com/600x400/?korean,bbq,pork", map: {x: '56%', y: '21%'}, icon: '🐖'},
-            { id: 23, name: "탑부평 본전", category: "흑돼지", region: "남부", menu: "흑돼지 오겹살", price: "4~6만원대", review: "서귀포 현지인들이 사랑하는 찐맛집. 두툼한 고기와 친절한 서비스.", hours: "16:00 - 22:00", address: "서귀포시 부두로 21", photo: "https://source.unsplash.com/600x400/?korean,pork,belly", map: {x: '57%', y: '92%'}, icon: '🖤'},
-            { id: 24, name: "직구고", category: "흑돼지", region: "북부", menu: "흑돼지 직구세트", price: "5~7만원대", review: "직접 다 구워주셔서 편하게 먹을 수 있음. 고기 퀄리티가 매우 좋음.", hours: "16:00 - 23:00", address: "제주시 연동12길 11", photo: "https://source.unsplash.com/600x400/?korean,barbecue,pork", map: {x: '35%', y: '26%'}, icon: '👨‍🍳'},
-            { id: 25, name: "금돗 성산흑돼지", category: "흑돼지", region: "동부", menu: "흑돼지 근고기", price: "5~7만원대", review: "성산일출봉 근처 뷰 좋은 흑돼지집. 고기가 신선하고 두툼함.", hours: "12:00 - 22:00", address: "서귀포시 성산읍 일출로 266", photo: "https://source.unsplash.com/600x400/?jeju,black,pork", map: {x: '93%', y: '58%'}, icon: '🌅'},
-            { id: 26, name: "오직흑돼지 제주공항본점", category: "흑돼지", region: "북부", menu: "흑돼지 오겹살", price: "4~6만원대", review: "공항에서 가까워 여행 시작/마무리 식사로 좋음. 깔끔하고 맛도 준수.", hours: "11:30 - 22:00", address: "제주시 월랑로 56", photo: "https://source.unsplash.com/600x400/?grilled,pork,belly", map: {x: '33%', y: '24%'}, icon: '✈️'},
-            { id: 27, name: "꽃돼지연탄구이", category: "흑돼지", region: "북부", menu: "흑돼지 근고기", price: "5~7만원대", review: "연탄불에 구워 불향 가득. 노포 감성으로 술 한잔하기 좋은 분위기.", hours: "16:00 - 24:00", address: "제주시 관덕로15길 25", photo: "https://source.unsplash.com/600x400/?charcoal,grilled,pork", map: {x: '37%', y: '23%'}, icon: '🌸'},
-            { id: 28, name: "칠돈가 본점", category: "흑돼지", region: "북부", menu: "흑돼지 근고기", price: "5~7만원대", review: "제주 흑돼지 근고기의 대표주자. 두툼한 고기와 멜젓의 원조격.", hours: "13:00 - 22:30", address: "제주시 서사로 11", photo: "https://source.unsplash.com/600x400/?thick,pork,belly,korean", map: {x: '36%', y: '24%'}, icon: '7️⃣'},
-            { id: 29, name: "칠돈가 중문점", category: "흑돼지", region: "남부", menu: "흑돼지 근고기", price: "5~7만원대", review: "본점의 맛을 중문에서도! 관광객 접근성이 좋고 맛도 훌륭함.", hours: "12:00 - 22:00", address: "서귀포시 천제연로 137", photo: "https://source.unsplash.com/600x400/?jeju,bbq,pork", map: {x: '37%', y: '86%'}, icon: '💯'},
-            { id: 30, name: "숙성도 애월점", category: "흑돼지", region: "서부", menu: "교차숙성 흑돼지", price: "6~8만원대", review: "인생 흑돼지를 만날 수 있는 곳. 웨이팅은 길지만 후회 없는 맛.", hours: "12:00 - 22:00", address: "제주시 애월읍 애월북서길 54", photo: "https://source.unsplash.com/600x400/?aged,pork,korean,bbq", map: {x: '24%', y: '26%'}, icon: '👑'},
-            { id: 31, name: "숙성도 중문점", category: "흑돼지", region: "남부", menu: "교차숙성 흑돼지", price: "6~8만원대", review: "최고의 흑돼지를 중문에서. 테이블링 앱 원격 줄서기 필수.", hours: "12:00 - 22:00", address: "서귀포시 일주서로 966", photo: "https://source.unsplash.com/600x400/?korean,aged,pork,grill", map: {x: '36%', y: '84%'}, icon: '🏆'},
-            { id: 32, name: "숙성도 제주본점", category: "흑돼지", region: "북부", menu: "교차숙성 흑돼지", price: "6~8만원대", review: "명불허전 숙성도의 시작. 극강의 부드러움과 육즙을 경험할 수 있음.", hours: "12:00 - 22:00", address: "제주시 원노형로 41", photo: "https://source.unsplash.com/600x400/?fine,dining,pork,bbq", map: {x: '34%', y: '27%'}, icon: '🥇'},
-            { id: 33, name: "숙성도 함덕점", category: "흑돼지", region: "북부", menu: "교차숙성 흑돼지", price: "6~8만원대", review: "함덕해변 근처에서 즐기는 최고의 흑돼지. 오션뷰는 덤.", hours: "12:00 - 22:00", address: "제주시 조천읍 조함해안로 514", photo: "https://source.unsplash.com/600x400/?pork,bbq,beach,view", map: {x: '55%', y: '19%'}, icon: '🌊'},
+            { id: 21, name: "송당회관", category: "흑돼지", region: "동부", menu1: "흑돼지 두루치기", price1: "10,000원 (1인)", photo1: "https://search.naver.com/search.naver?where=image&query=송당회관+흑돼지두루치기", menu2: "볶음밥", price2: "2,000원", photo2: "https://search.naver.com/search.naver?where=image&query=송당회관+볶음밥", review: "제주 동쪽 중산간에 위치한 가성비 맛집. 저렴한 가격에 푸짐한 흑돼지 두루치기를 맛볼 수 있다.", hours: "10:00 - 20:00", address: "제주시 구좌읍 중산간동로 2253", map: {x: '73%', y: '42%'}, icon: '🐷'},
+            { id: 22, name: "깡촌흑돼지 함덕본점", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "63,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=깡촌흑돼지+함덕", menu2: "김치찌개", price2: "7,000원", photo2: "https://search.naver.com/search.naver?where=image&query=깡촌흑돼지+김치찌개", review: "초벌구이를 해서 나와 육즙이 가득한 흑돼지를 맛볼 수 있다. 직원들이 직접 구워주어 편하게 식사할 수 있다.", hours: "12:00 - 22:00", address: "제주시 조천읍 신북로 493", map: {x: '56%', y: '21%'}, icon: '🐖'},
+            { id: 23, name: "탑부평 본점", category: "흑돼지", region: "남부", menu1: "흑돼지 생오겹살", price1: "20,000원 (200g)", photo1: "https://search.naver.com/search.naver?where=image&query=탑부평+본점+흑돼지", menu2: "된장찌개", price2: "2,000원", photo2: "https://search.naver.com/search.naver?where=image&query=탑부평+된장찌개", review: "서귀포 현지인들이 많이 찾는 흑돼지 맛집. 두툼하고 쫄깃한 오겹살의 퀄리티가 매우 높다.", hours: "16:00 - 22:00", address: "서귀포시 부두로 21", map: {x: '57%', y: '92%'}, icon: '🖤'},
+            { id: 24, name: "직구고", category: "흑돼지", region: "북부", menu1: "흑돼지 직구세트", price1: "68,000원 (2인)", photo1: "https://search.naver.com/search.naver?where=image&query=직구고+흑돼지", menu2: "딱새우 된장찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=직구고+딱새우된장찌개", review: "직원들이 처음부터 끝까지 고기를 직접 구워주는 프리미엄 흑돼지 전문점. 최상의 굽기로 구워진 고기는 육즙이 풍부하다.", hours: "16:00 - 23:00", address: "제주시 연동12길 11", map: {x: '35%', y: '26%'}, icon: '👨‍🍳'},
+            { id: 25, name: "금돗 성산흑돼지", category: "흑돼지", region: "동부", menu1: "흑돼지 근고기", price1: "66,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=금돗+성산흑돼지", menu2: "김치찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=금돗+성산흑돼지+김치찌개", review: "성산일출봉 근처에 위치해 뷰가 좋은 흑돼지 맛집. 창가 자리에서는 성산일출봉을 보며 식사할 수 있다.", hours: "12:00 - 22:00", address: "서귀포시 성산읍 일출로 266", map: {x: '93%', y: '58%'}, icon: '🌅'},
+            { id: 26, name: "오직흑돼지 제주공항본점", category: "흑돼지", region: "북부", menu1: "흑돼지 오겹살", price1: "19,000원 (180g)", photo1: "https://search.naver.com/search.naver?where=image&query=오직흑돼지+공항본점", menu2: "흑돼지 김치찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=오직흑돼지+김치찌개", review: "공항과 가까워 여행의 시작이나 마지막 식사 장소로 좋다. 매장이 깔끔하고, 고기 맛도 준수하다.", hours: "11:30 - 22:00", address: "제주시 월랑로 56", map: {x: '33%', y: '24%'}, icon: '✈️'},
+            { id: 27, name: "꽃돼지연탄구이", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "60,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=꽃돼지연탄구이", menu2: "흑돼지 김치찌개", price2: "7,000원", photo2: "https://search.naver.com/search.naver?where=image&query=꽃돼지연탄구이+김치찌개", review: "연탄불에 구워 은은한 불향이 매력적인 흑돼지 맛집. 노포 감성의 분위기에서 술 한잔하기 좋다.", hours: "16:00 - 24:00", address: "제주시 관덕로15길 25", map: {x: '37%', y: '23%'}, icon: '🌸'},
+            { id: 28, name: "칠돈가 본점", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "66,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=칠돈가+본점", menu2: "김치찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=칠돈가+김치찌개", review: "제주 흑돼지 근고기의 원조격으로 불리는 유명 맛집. 연탄불에 구워주는 두툼한 고기는 육즙이 살아있다.", hours: "13:00 - 22:30", address: "제주시 서사로 11", map: {x: '36%', y: '24%'}, icon: '7️⃣'},
+            { id: 29, name: "칠돈가 중문점", category: "흑돼지", region: "남부", menu1: "흑돼지 근고기", price1: "66,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=칠돈가+중문점", menu2: "동치미국수", price2: "6,000원", photo2: "https://search.naver.com/search.naver?where=image&query=칠돈가+동치미국수", review: "본점의 맛과 시스템을 중문에서도 즐길 수 있다. 중문관광단지와 가까워 관광객들의 접근성이 좋다.", hours: "12:00 - 22:00", address: "서귀포시 천제연로 137", map: {x: '37%', y: '86%'}, icon: '💯'},
+            { id: 30, name: "숙성도 애월점", category: "흑돼지", region: "서부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+애월", menu2: "동치미 열무국수", price2: "6,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+열무국수", review: "제주 흑돼지 맛집의 신흥 강자. 독자적인 숙성 방식으로 극강의 부드러움과 풍미를 자랑한다. 테이블링 앱 원격 줄서기 필수.", hours: "12:00 - 22:00", address: "제주시 애월읍 애월북서길 54", map: {x: '24%', y: '26%'}, icon: '👑'},
+            { id: 31, name: "숙성도 중문점", category: "흑돼지", region: "남부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+중문", menu2: "갈치속젓 볶음밥", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+갈치속젓볶음밥", review: "최고의 흑돼지를 중문에서 맛볼 수 있다. 고기 퀄리티와 서비스 모두 훌륭하며, 감칠맛 나는 갈치속젓 볶음밥으로 마무리하는 것이 인기.", hours: "12:00 - 22:00", address: "서귀포시 일주서로 966", map: {x: '36%', y: '84%'}, icon: '🏆'},
+            { id: 32, name: "숙성도 제주본점", category: "흑돼지", region: "북부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+노형본점", menu2: "명란젓", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+명란젓", review: "숙성도 신화의 시작점. 고사리, 백김치, 명란젓 등 다양한 곁들임과 함께 즐기는 숙성 흑돼지의 맛이 일품.", hours: "12:00 - 22:00", address: "제주시 원노형로 41", map: {x: '34%', y: '27%'}, icon: '🥇'},
+            { id: 33, name: "숙성도 함덕점", category: "흑돼지", region: "북부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+함덕", menu2: "960숙성 뼈등심", price2: "28,000원 (1인)", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+뼈등심", review: "함덕해수욕장 바로 앞에 위치해 오션뷰를 즐기며 식사할 수 있다. 한정 판매하는 뼈등심 메뉴가 특별하다.", hours: "12:00 - 22:00", address: "제주시 조천읍 조함해안로 514", map: {x: '55%', y: '19%'}, icon: '🌊'},
 
             // 한식/해장국
-            { id: 34, name: "모다정", category: "한식/해장국", region: "남부", menu: "전복두루치기", price: "3~5만원대", review: "전복, 흑돼지, 딱새우가 들어간 매콤한 두루치기. 볶음밥 필수.", hours: "09:00 - 21:00", address: "서귀포시 이어도로 1021", photo: "https://source.unsplash.com/600x400/?korean,spicy,pork,abalone", map: {x: '45%', y: '88%'}, icon: '❤️'},
-            { id: 35, name: "산지해장국 성산점", category: "한식/해장국", region: "동부", menu: "소고기해장국", price: "1만원 미만", review: "제주식 해장국의 정석. 시원하고 칼칼한 국물이 일품. 아침식사로 최고.", hours: "06:00 - 15:00", address: "서귀포시 성산읍 고성리 1146-2", photo: "https://source.unsplash.com/600x400/?haejangguk,korean,hangover,soup", map: {x: '90%', y: '57%'}, icon: '☀️'},
-            { id: 36, name: "우진해장국", category: "한식/해장국", region: "북부", menu: "고사리육개장", price: "1만원 내외", review: "걸쭉한 비주얼에 놀라고 깊은 맛에 두 번 놀람. 제주에서만 맛볼 수 있는 별미.", hours: "06:00 - 22:00", address: "제주시 서사로 11", photo: "https://source.unsplash.com/600x400/?yukgaejang,korean,spicy,beef,soup", map: {x: '38%', y: '23%'}, icon: '🍵'},
+            { id: 34, name: "모다정", category: "한식/해장국", region: "남부", menu1: "전복 두루치기(중)", price1: "45,000원", photo1: "https://search.naver.com/search.naver?where=image&query=모다정+전복두루치기", menu2: "전복 성게 돌솥밥", price2: "17,000원", photo2: "https://search.naver.com/search.naver?where=image&query=모다정+전복성게돌솥밥", review: "전복, 흑돼지, 딱새우, 오징어 등 다양한 재료가 들어간 두루치기가 대표 메뉴. 매콤달콤한 양념이 입맛을 돋운다.", hours: "09:00 - 21:00", address: "서귀포시 이어도로 1021", map: {x: '45%', y: '88%'}, icon: '❤️'},
+            { id: 35, name: "산지해장국 성산점", category: "한식/해장국", region: "동부", menu1: "소고기 해장국", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=산지해장국+성산점", menu2: "내장탕", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=산지해장국+내장탕", review: "제주식 해장국의 정석. 선지와 소고기가 푸짐하게 들어있고, 칼칼하면서도 시원한 국물 맛이 일품이다.", hours: "06:00 - 15:00", address: "서귀포시 성산읍 고성리 1146-2", map: {x: '90%', y: '57%'}, icon: '☀️'},
+            { id: 36, name: "우진해장국", category: "한식/해장국", region: "북부", menu1: "고사리 육개장", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=우진해장국+고사리육개장", menu2: "몸국", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=우진해장국+몸국", review: "제주에서만 맛볼 수 있는 독특한 비주얼의 고사리 육개장이 대표 메뉴. 걸쭉하고 깊은 맛이 난다.", hours: "06:00 - 22:00", address: "제주시 서사로 11", map: {x: '38%', y: '23%'}, icon: '🍵'}
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -240,18 +241,22 @@
                     card.className = 'bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer flex flex-col';
                     card.dataset.id = d.id;
                     card.innerHTML = `
-                        <img class="h-40 w-full object-cover" src="${d.photo}" alt="${d.name}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FEFBF6/7F5539?text=${encodeURIComponent(d.name)}';">
                         <div class="p-4 flex flex-col flex-grow">
-                            <div class="flex justify-between items-start">
+                             <div class="flex justify-between items-start">
                                 <h3 class="text-lg font-bold text-gray-800">${d.icon} ${d.name}</h3>
                                 <span class="text-sm font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${d.region}</span>
                             </div>
-                            <p class="text-gray-600 mt-1 text-sm">대표: ${d.menu}</p>
+                            <p class="text-gray-600 mt-2 text-sm">1️⃣ ${d.menu1}</p>
+                            <p class="text-gray-600 mt-1 text-sm">2️⃣ ${d.menu2}</p>
                             <div class="mt-3 bg-gray-50 p-2 rounded-lg flex-grow">
                                 <p class="text-xs text-gray-700">💬 "${d.review}"</p>
                             </div>
-                        </div>`;
-                    card.addEventListener('click', () => openModal(d.id));
+                        </div>
+                        <div class="p-3 bg-gray-50 border-t">
+                            <button class="w-full bg-[#B08968] text-white py-2 rounded-lg hover:bg-[#9C6644] transition-colors" onclick="window.open('${d.photo1}', '_blank')">실제 리뷰 사진 보기</button>
+                        </div>
+                        `;
+                    card.querySelector('.p-4').addEventListener('click', () => openModal(d.id)); // 버튼 제외 영역 클릭 시 모달
                     grid.appendChild(card);
                 });
             };
@@ -260,12 +265,19 @@
                 const spot = restaurantData.find(d => d.id == id);
                 modalTitle.innerHTML = `${spot.icon} ${spot.name}`;
                 modalBody.innerHTML = `
-                    <img class="h-60 w-full object-cover rounded-lg" src="${spot.photo}" alt="${spot.name}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FEFBF6/7F5539?text=${encodeURIComponent(spot.name)}';">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                        <div class="bg-amber-50 p-3 rounded-lg"><span class="font-semibold text-amber-800">대표 메뉴:</span> ${spot.menu}</div>
-                        <div class="bg-red-50 p-3 rounded-lg"><span class="font-semibold text-red-800">가격대:</span> ${spot.price}</div>
-                        <div class="bg-blue-50 p-3 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-blue-800">위치:</span> ${spot.address}</div>
-                        <div class="bg-green-50 p-3 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-green-800">영업 시간:</span> ${spot.hours}</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-amber-50 p-4 rounded-lg">
+                            <p class="font-semibold text-amber-800">대표 메뉴 1: ${spot.menu1}</p>
+                            <p class="text-sm text-gray-600">가격: ${spot.price1}</p>
+                            <a href="${spot.photo1}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <p class="font-semibold text-red-800">대표 메뉴 2: ${spot.menu2}</p>
+                            <p class="text-sm text-gray-600">가격: ${spot.price2}</p>
+                            <a href="${spot.photo2}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-blue-800">위치:</span> ${spot.address}</div>
+                        <div class="bg-green-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-green-800">영업 시간:</span> ${spot.hours}</div>
                     </div>
                     <div class="mt-4 bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-bold text-lg text-gray-800 mb-2">❤️ 한줄평</h4>
@@ -294,8 +306,8 @@
             const renderCompareTables = () => {
                 const container = document.getElementById('compare-tables');
                 container.innerHTML = '';
-                const categories = ['흑돼지', '해산물', '한식/해장국', '분식/기타'];
-                const headers = [ {key: 'name', label: '이름'}, {key: 'menu', label: '대표 메뉴'}, {key: 'price', label: '가격대'}, {key: 'review', label: '한줄평'} ];
+                const categories = ['흑돼지', '해산물', '한식/해장국', '분식/기타', '카페/디저트'];
+                const headers = [ {key: 'name', label: '이름'}, {key: 'menu1', label: '대표 메뉴 1'}, {key: 'menu2', label: '대표 메뉴 2'}, {key: 'review', label: '한줄평'} ];
                 categories.forEach(cat => {
                     const data = restaurantData.filter(d => d.category === cat);
                     if (data.length === 0) return;
@@ -310,8 +322,8 @@
                                     ${data.map(d => `
                                         <tr class="bg-white border-b hover:bg-gray-50">
                                             <td class="px-6 py-4 font-medium text-gray-900">${d.name}</td>
-                                            <td class="px-6 py-4">${d.menu}</td>
-                                            <td class="px-6 py-4">${d.price}</td>
+                                            <td class="px-6 py-4">${d.menu1} (${d.price1})</td>
+                                            <td class="px-6 py-4">${d.menu2} (${d.price2})</td>
                                             <td class="px-6 py-4 text-xs">"${d.review}"</td>
                                         </tr>`).join('')}
                                 </tbody>
