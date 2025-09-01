@@ -3,43 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>그녀를 위한 완벽한 제주 여행 가이드 (경로 개선본)</title>
+    <title>그녀를 위한 완벽한 제주 여행 가이드 (최종 수정본)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- [중요] YOUR_KAKAO_APP_KEY 부분에 발급받은 JavaScript 키를 입력하세요. -->
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d3c3d2e4c30d1ef210332f70e5394b36&libraries=services&autoload=false"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #FEFBF6; color: #7F5539; }
+        :root {
+            --primary-color: #38bdf8; /* sky-400 */
+            --primary-dark-color: #0ea5e9; /* sky-500 */
+            --text-dark-color: #1f2937; /* gray-800 */
+            --text-light-color: #4b5563; /* gray-600 */
+            --bg-light-color: #f8fafc; /* slate-50 */
+            --border-color: #e2e8f0; /* slate-200 */
+        }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg-light-color); color: var(--text-dark-color); }
         .nav-item { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
-        .nav-item.active, .nav-item:hover { color: #B08968; border-bottom-color: #B08968; }
+        .nav-item.active, .nav-item:hover { color: var(--primary-dark-color); border-bottom-color: var(--primary-dark-color); }
         .filter-btn, .day-btn { transition: all 0.2s ease-in-out; }
-        .filter-btn.active, .day-btn.active { background-color: #9C6644; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .filter-btn.active, .day-btn.active { background-color: var(--primary-color); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-color: var(--primary-color); }
         .modal-overlay { transition: opacity 0.3s ease; }
         .modal-content { transition: transform 0.3s ease; }
         .chart-container { position: relative; width: 100%; max-width: 500px; margin: auto; height: 300px; max-height: 350px; }
         @media (min-width: 768px) { .chart-container { height: 350px; max-height: 400px; } }
         
-        /* 맛집 지도 마커 */
         .custom-overlay-restaurant { position: relative; background-color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transform: translate(-50%, -50%); cursor: pointer; transition: transform 0.2s ease; }
         .custom-overlay-restaurant:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
         .custom-overlay-icon { font-size: 1.5rem; }
         .custom-overlay-label { position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75); color: white; padding: 4px 8px; border-radius: 6px; font-size: 13px; white-space: nowrap; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
         .custom-overlay-restaurant:hover .custom-overlay-label { opacity: 1; }
         
-        /* 여행 경로 타임라인 */
-        .timeline-item-container.active .timeline-content { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-color: #9C6644; }
+        .timeline-item-container.active .timeline-content { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-color: var(--primary-dark-color); }
         .timeline-content { transition: all 0.3s ease; border: 2px solid transparent; }
-        .travel-time-info { text-align: center; color: #A8A29E; font-size: 0.8rem; margin: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; padding-left: 3rem; }
-        .travel-time-info::before, .travel-time-info::after { content: ''; flex-grow: 1; height: 1px; background: repeating-linear-gradient(90deg, #D6D3D1, #D6D3D1 4px, transparent 4px, transparent 8px); }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #9C6644; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .travel-time-info { text-align: center; color: #94a3b8; font-size: 0.8rem; margin: 0.5rem 0; display: flex; align-items: center; gap: 0.5rem; padding-left: 3rem; }
+        .travel-time-info::before, .travel-time-info::after { content: ''; flex-grow: 1; height: 1px; background: repeating-linear-gradient(90deg, #cbd5e1, #cbd5e1 4px, transparent 4px, transparent 8px); }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 여행 경로 지도 마커 */
-        .custom-overlay-path { position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background-color: white; border: 2px solid #B08968; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; transform: translate(-50%, -50%); transition: all 0.2s ease; }
-        .custom-overlay-path:hover { transform: translate(-50%, -50%) scale(1.2); border-color: #7F5539; z-index: 10; }
+        .custom-overlay-path { position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background-color: white; border: 2px solid var(--primary-color); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; transform: translate(-50%, -50%); transition: all 0.2s ease; }
+        .custom-overlay-path:hover { transform: translate(-50%, -50%) scale(1.2); border-color: var(--primary-dark-color); z-index: 10; }
         .custom-overlay-path .icon { font-size: 1.25rem; }
-        .custom-overlay-path .number { position: absolute; top: -5px; right: -5px; background-color: #9C6644; color: white; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+        .custom-overlay-path .number { position: absolute; top: -5px; right: -5px; background-color: var(--primary-dark-color); color: white; font-size: 10px; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
         .custom-overlay-path .label { position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.8); color: white; padding: 4px 8px; border-radius: 6px; font-size: 13px; white-space: nowrap; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
         .custom-overlay-path:hover .label { opacity: 1; }
     </style>
@@ -48,11 +53,11 @@
 
     <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-[#7F5539] mb-2">To. My Girlfriend ❤️</h1>
-            <p class="text-lg text-gray-600">우리가 함께 갈 제주 맛집과 여행 경로, 내가 완벽하게 다시 정리했어!</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-sky-500 mb-2">To. My Girlfriend ❤️</h1>
+            <p class="text-lg text-gray-500">우리가 함께 갈 제주 맛집과 여행 경로, 내가 완벽하게 다시 정리했어!</p>
         </header>
 
-        <nav class="flex justify-center border-b border-yellow-800/20 mb-8 space-x-2 sm:space-x-4 md:space-x-8">
+        <nav class="flex justify-center border-b border-slate-200 mb-8 space-x-2 sm:space-x-4 md:space-x-8">
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500 active" data-view="explore">맛집 탐색</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="compare">카테고리별 비교</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="map">맛집 지도</button>
@@ -61,21 +66,20 @@
         </nav>
 
         <main>
-            <!-- 맛집 탐색 View -->
             <section id="explore-view">
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
-                    <p class="text-gray-700 text-center leading-relaxed">네가 가고 싶다고 했던 제주 맛집 리스트야! 필터로 편하게 찾아보고, 카드를 눌러서 자세한 정보를 확인해봐. <br class="hidden sm:block"> '사진 보기'를 누르면 다른 사람들이 올린 실제 음식 사진들을 볼 수 있어!</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+                    <p class="text-gray-600 text-center leading-relaxed">네가 가고 싶다고 했던 제주 맛집 리스트야! 필터로 편하게 찾아보고, 카드를 눌러서 자세한 정보를 확인해봐. <br class="hidden sm:block"> '사진 보기'를 누르면 다른 사람들이 올린 실제 음식 사진들을 볼 수 있어!</p>
                 </div>
                 <div id="filters" class="mb-8 space-y-6">
                     <div>
                         <h3 class="font-semibold mb-3 text-lg text-gray-700"># 음식 종류</h3>
                         <div class="flex flex-wrap gap-2">
-                            <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700 active" data-category="all">전체보기</button>
-                            <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="흑돼지">🍖 흑돼지</button>
-                            <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="해산물">🦞 해산물</button>
-                            <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="한식/해장국">🍲 한식&해장국</button>
-                            <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="분식/기타">🍙 분식&기타</button>
-                             <button class="filter-btn category-btn border border-gray-300 px-4 py-2 rounded-full text-gray-700" data-category="카페/디저트">🍰 카페/디저트</button>
+                            <button class="filter-btn category-btn border border-slate-300 px-4 py-2 rounded-full text-gray-700 active" data-category="all">전체보기</button>
+                            <button class="filter-btn category-btn border border-slate-300 px-4 py-2 rounded-full text-gray-700" data-category="흑돼지">🍖 흑돼지</button>
+                            <button class="filter-btn category-btn border border-slate-300 px-4 py-2 rounded-full text-gray-700" data-category="해산물">🦞 해산물</button>
+                            <button class="filter-btn category-btn border border-slate-300 px-4 py-2 rounded-full text-gray-700" data-category="한식/해장국">🍲 한식&해장국</button>
+                            <button class="filter-btn category-btn border border-slate-300 px-4 py-2 rounded-full text-gray-700" data-category="분식/기타">🍙 분식&기타</button>
+                            <button class="filter-btn category-btn border border-slate-300 px-4 py-2 rounded-full text-gray-700" data-category="카페/디저트">🍰 카페/디저트</button>
                         </div>
                     </div>
                 </div>
@@ -83,32 +87,29 @@
                 <p id="no-results" class="text-center text-gray-500 py-12 hidden">선택한 조건에 맞는 맛집이 없어!</p>
             </section>
             
-            <!-- 카테고리별 비교 View -->
             <section id="compare-view" class="hidden">
-                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
-                     <p class="text-gray-700 text-center leading-relaxed">"흑돼지는 어디가 좋을까?", "고등어회는 여기가 괜찮을까?" 고민될 때 여기를 봐! 음식 종류별로 맛집들을 모아놨어. 대표 메뉴랑 가격, 한줄평을 비교해보면서 우리한테 딱 맞는 곳을 골라보자.</p>
+                 <div class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+                     <p class="text-gray-600 text-center leading-relaxed">"흑돼지는 어디가 좋을까?", "고등어회는 여기가 괜찮을까?" 고민될 때 여기를 봐! 음식 종류별로 맛집들을 모아놨어. 대표 메뉴랑 가격, 한줄평을 비교해보면서 우리한테 딱 맞는 곳을 골라보자.</p>
                  </div>
                  <div id="compare-tables" class="space-y-12"></div>
             </section>
             
-            <!-- 맛집 지도 View -->
             <section id="map-view" class="hidden">
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
-                     <p class="text-gray-700 text-center leading-relaxed">우리가 갈 맛집들이 제주도 어디에 있는지 지도에 표시해봤어. 이걸로 여행 동선 짜면 정말 편할거야! 아이콘을 클릭하면 자세한 정보가 나와.</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+                     <p class="text-gray-600 text-center leading-relaxed">우리가 갈 맛집들이 제주도 어디에 있는지 지도에 표시해봤어. 이걸로 여행 동선 짜면 정말 편할거야! 아이콘을 클릭하면 자세한 정보가 나와.</p>
                 </div>
                 <div id="restaurant-map-container" class="w-full h-[60vh] md:h-[70vh] rounded-lg shadow-lg"></div>
             </section>
 
-            <!-- 여행 경로 View -->
             <section id="timeline-view" class="hidden">
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
-                    <p class="text-gray-700 text-center leading-relaxed">우리의 1박 2일 여행 경로야! 타임라인을 클릭하면 지도가 움직여. <br class="hidden sm:block"> '주변 추천받기' 버튼으로 즉흥적으로 새로운 곳을 찾아보는 재미도 놓치지 마!</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+                    <p class="text-gray-600 text-center leading-relaxed">우리의 1박 2일 여행 경로야! 타임라인을 클릭하면 지도가 움직여. <br class="hidden sm:block"> '주변 추천받기' 버튼으로 즉흥적으로 새로운 곳을 찾아보는 재미도 놓치지 마!</p>
                 </div>
                 <div class="flex flex-col lg:flex-row gap-8">
                     <aside class="w-full lg:w-2/5 xl:w-1/3">
                         <div id="timeline-day-selector" class="flex gap-2 mb-6">
-                            <button data-day="1" class="day-btn border border-gray-300 font-bold py-3 px-4 rounded-lg active">Day 1</button>
-                            <button data-day="2" class="day-btn border border-gray-300 font-bold py-3 px-4 rounded-lg">Day 2</button>
+                            <button data-day="1" class="day-btn border border-slate-300 font-bold py-3 px-4 rounded-lg active">Day 1</button>
+                            <button data-day="2" class="day-btn border border-slate-300 font-bold py-3 px-4 rounded-lg">Day 2</button>
                         </div>
                         <div id="timeline-list-container" class="relative max-h-[60vh] overflow-y-auto pr-2"></div>
                     </aside>
@@ -118,10 +119,9 @@
                 </div>
             </section>
 
-            <!-- 인사이트 View -->
             <section id="insights-view" class="hidden">
-                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
-                     <p class="text-gray-700 text-center leading-relaxed">우리가 고른 맛집들을 보니까 우리의 취향이 보이네! 어떤 종류의 음식을 가장 좋아하는지, 어느 지역에 많이 가고 싶어하는지 차트로 만들어봤어. 재미로 한번 봐봐!</p>
+                 <div class="bg-white p-6 rounded-2xl shadow-sm mb-8">
+                     <p class="text-gray-600 text-center leading-relaxed">우리가 고른 맛집들을 보니까 우리의 취향이 보이네! 어떤 종류의 음식을 가장 좋아하는지, 어느 지역에 많이 가고 싶어하는지 차트로 만들어봤어. 재미로 한번 봐봐!</p>
                  </div>
                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                      <div class="bg-white p-6 rounded-xl shadow-md">
@@ -137,11 +137,10 @@
         </main>
     </div>
 
-    <!-- 공용 모달 -->
     <div id="modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
         <div class="modal-content bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col transform scale-95">
-            <div id="modal-header" class="p-5 border-b flex justify-between items-center bg-gray-50">
-                <h2 id="modal-title" class="text-2xl font-bold text-[#7F5539]"></h2>
+            <div id="modal-header" class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h2 id="modal-title" class="text-2xl font-bold text-sky-500"></h2>
                 <button id="modal-close-btn" class="text-gray-400 hover:text-gray-700 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -152,12 +151,11 @@
 
     <script>
         // [중요] API 키 입력: Gemini API 키
-        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
+        const GEMINI_API_KEY = "AIzaSyAHaulmvkZyChIOH1bDVpgtYjijqaiXefA";
 
         // --- 데이터 영역 ---
         const restaurantData = [
-            // ... (기존 restaurantData, 위도/경도 포함) ...
-             { id: 1, name: "아라찐빵", category: "분식/기타", region: "북부", menu1: "찐빵", price1: "1,000원", photo1: "https://search.naver.com/search.naver?where=image&query=아라찐빵+찐빵", menu2: "꽈배기", price2: "1,000원", photo2: "https://search.naver.com/search.naver?where=image&query=아라찐빵+꽈배기", review: "제주 현지인들이 인정하는 숨은 맛집. 팥소가 너무 달지 않고 피가 쫀득쫀득해서 남녀노소 모두 좋아한다.", hours: "09:00 - 18:00 (일요일 휴무)", address: "제주시 인다1길 12", lat: 33.4896, lng: 126.5412, icon: '🥟'},
+            { id: 1, name: "아라찐빵", category: "분식/기타", region: "북부", menu1: "찐빵", price1: "1,000원", photo1: "https://search.naver.com/search.naver?where=image&query=아라찐빵+찐빵", menu2: "꽈배기", price2: "1,000원", photo2: "https://search.naver.com/search.naver?where=image&query=아라찐빵+꽈배기", review: "제주 현지인들이 인정하는 숨은 맛집. 팥소가 너무 달지 않고 피가 쫀득쫀득해서 남녀노소 모두 좋아한다.", hours: "09:00 - 18:00 (일요일 휴무)", address: "제주시 인다1길 12", lat: 33.4896, lng: 126.5412, icon: '🥟'},
             { id: 2, name: "오는정김밥", category: "분식/기타", region: "남부", menu1: "오는정김밥", price1: "3,500원", photo1: "https://search.naver.com/search.naver?where=image&query=오는정김밥", menu2: "치즈김밥", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=오는정김밥+치즈김밥", review: "전국구 명성의 김밥. 바삭하게 튀긴 유부가 들어가 독특한 식감과 고소한 맛을 낸다. 전화 예약 필수.", hours: "10:00 - 20:00 (일요일 휴무)", address: "서귀포시 동문동로 2", lat: 33.2500, lng: 126.5630, icon: '🍙'},
             { id: 3, name: "풀베개", category: "카페/디저트", region: "남부", menu1: "당근 케이크", price1: "7,500원", photo1: "https://search.naver.com/search.naver?where=image&query=풀베개+당근케이크", menu2: "흑임자갸또", price2: "7,500원", photo2: "https://search.naver.com/search.naver?where=image&query=풀베개+흑임자갸또", review: "조용한 주택가에 위치한 디저트 카페. 꾸덕하고 진한 크림치즈와 시나몬 향이 매력적인 당근 케이크가 가장 유명하다.", hours: "11:00 - 19:00 (수요일 휴무)", address: "서귀포시 이어도로595번길 20-3", lat: 33.2533, lng: 126.4837, icon: '🍰'},
             { id: 5, name: "명랑스낵", category: "분식/기타", region: "서부", menu1: "흑돼지 튀김", price1: "9,000원", photo1: "https://search.naver.com/search.naver?where=image&query=명랑스낵+흑돼지튀김", menu2: "한치 튀김", price2: "9,000원", photo2: "https://search.naver.com/search.naver?where=image&query=명랑스낵+한치튀김", review: "협재해변 바로 앞에 위치한 분식집. 바삭하고 고소한 흑돼지 튀김이 맥주와 잘 어울린다.", hours: "11:30 - 19:30 (수요일 휴무)", address: "제주시 한림읍 한림로 1480", lat: 33.4150, lng: 126.2625, icon: '🍤'},
@@ -195,322 +193,10 @@
             { id: 36, name: "우진해장국", category: "한식/해장국", region: "북부", menu1: "고사리 육개장", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=우진해장국+고사리육개장", menu2: "몸국", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=우진해장국+몸국", review: "제주에서만 맛볼 수 있는 독특한 비주얼의 고사리 육개장이 대표 메뉴. 걸쭉하고 깊은 맛이 난다.", hours: "06:00 - 22:00", address: "제주시 서사로 11", lat: 33.5118, lng: 126.5193, icon: '🍵'},
             { id: 37, name: "위이", category: "카페/디저트", region: "남부", menu1: "프렌치 토스트", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=위이+프렌치토스트", menu2: "제주 돌문어구이", price2: "24,000원", photo2: "https://search.naver.com/search.naver?where=image&query=위이+돌문어구이", review: "산방산과 바다가 보이는 탁 트인 전망의 브런치 카페. 분위기도 좋고 커피와 디저트 맛도 훌륭하다.", hours: "10:00 - 19:00 (시간대별 메뉴 상이)", address: "제주특별자치도 서귀포시 안덕면 신화역사로 682번길 12", lat: 33.2980, lng: 126.3200, icon: '☕'}
         ];
-        
-        const travelData = {
-            1: [
-                { time: '10:00', place: '제주국제공항', activity: '도착', lat: 33.5104, lng: 126.4913, icon: '✈️', duration: null },
-                { time: '11:00', place: '명랑스낵', activity: '한치 튀김, 떡볶이', lat: 33.4150, lng: 126.2625, icon: '🍜', duration: 45 },
-                { time: '12:30', place: '풀베개', activity: '커피', lat: 33.2533, lng: 126.4837, icon: '☕', duration: 40 },
-                { time: '14:00', place: '제주부영호텔&리조트', activity: '체크인', lat: 33.2458, lng: 126.4087, icon: '🏨', duration: 15 },
-                { time: '15:00', place: '번네식당', activity: '갈치조림 식사', lat: 33.2514, lng: 126.5658, icon: '🍲', duration: 30 },
-                { time: '16:30', place: '제주부영호텔&리조트', activity: '휴식', lat: 33.2458, lng: 126.4087, icon: '🛌', duration: 30 },
-                { time: '18:30', place: '칠돈가 중문점', activity: '흑돼지 구이 식사', lat: 33.2505, lng: 126.4170, icon: '🍖', duration: 5 },
-                { time: '20:00', place: '제주부영호텔&리조트', activity: '휴식', lat: 33.2458, lng: 126.4087, icon: '🌙', duration: 5 }
-            ],
-            2: [
-                { time: '09:00', place: '제주선채향', activity: '전복칼국수 식사', lat: 33.2351, lng: 126.3115, icon: '🍜', duration: null },
-                { time: '10:30', place: '위이', activity: '커피', lat: 33.2980, lng: 126.3200, icon: '☕', duration: 15 },
-                { time: '12:00', place: '오는정 김밥', activity: '김밥 포장', lat: 33.2500, lng: 126.5630, icon: '🍙', duration: 40 },
-                { time: '14:00', place: '아쿠아뷰티크', activity: '체크인', lat: 33.5435, lng: 126.6668, icon: '🏨', duration: 70 },
-                { time: '17:00', place: '숙성도 함덕점', activity: '흑돼지 구이 식사', lat: 33.5430, lng: 126.6675, icon: '🍖', duration: 2 },
-                { time: '19:00', place: '미영이네 조천점', activity: '고등어 회 포장', lat: 33.5323, lng: 126.6908, icon: '🍣', duration: 10 },
-                { time: '20:00', place: '아쿠아뷰티크', activity: '휴식', lat: 33.5435, lng: 126.6668, icon: '🌙', duration: 10 }
-            ]
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const appState = { currentView: 'explore', filters: { category: 'all' }, currentTravelDay: 1 };
-            const views = {
-                explore: document.getElementById('explore-view'),
-                compare: document.getElementById('compare-view'),
-                map: document.getElementById('map-view'),
-                timeline: document.getElementById('timeline-view'),
-                insights: document.getElementById('insights-view')
-            };
-            const grid = document.getElementById('spot-grid'), noResults = document.getElementById('no-results');
-            const modal = document.getElementById('modal'), modalTitle = document.getElementById('modal-title'), modalBody = document.getElementById('modal-body');
-
-            let restaurantMap = null, timelineMap = null;
-            let restaurantMarkers = [], timelineMarkers = [], timelinePolyline = null;
-            let categoryChartInstance, regionChartInstance;
-
-            // --- 뷰 전환 로직 ---
-            const switchView = (viewName) => {
-                appState.currentView = viewName;
-                Object.values(views).forEach(v => v.classList.add('hidden'));
-                views[viewName].classList.remove('hidden');
-                document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === viewName));
-                
-                if (viewName === 'insights') renderCharts();
-                if (viewName === 'map' && !restaurantMap) initRestaurantMap();
-                if (viewName === 'timeline' && !timelineMap) initTimelineView();
-                if (viewName === 'compare') renderCompareTables();
-            };
-
-            // --- 맛집 탐색 관련 함수 ---
-            const renderCards = () => { /* ... 로직은 이전과 동일 ... */ 
-                grid.innerHTML = '';
-                const filteredData = restaurantData.filter(d => appState.filters.category === 'all' || d.category === appState.filters.category);
-                noResults.classList.toggle('hidden', filteredData.length > 0);
-                filteredData.forEach(d => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer flex flex-col';
-                    card.dataset.id = d.id;
-                    card.innerHTML = `
-                        <div class="p-4 flex flex-col flex-grow">
-                             <div class="flex justify-between items-start">
-                                 <h3 class="text-lg font-bold text-gray-800">${d.icon} ${d.name}</h3>
-                                 <span class="text-sm font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">${d.region}</span>
-                             </div>
-                             <p class="text-gray-600 mt-2 text-sm">1️⃣ ${d.menu1}</p>
-                             <p class="text-gray-600 mt-1 text-sm">2️⃣ ${d.menu2}</p>
-                             <div class="mt-3 bg-gray-50 p-2 rounded-lg flex-grow">
-                                 <p class="text-xs text-gray-700">💬 "${d.review}"</p>
-                             </div>
-                        </div>
-                        <div class="p-3 bg-gray-50 border-t">
-                            <button class="w-full bg-[#B08968] text-white py-2 rounded-lg hover:bg-[#9C6644] transition-colors image-view-btn">실제 리뷰 사진 보기</button>
-                        </div>`;
-                    card.querySelector('.p-4').addEventListener('click', () => openModal(d.id, 'restaurant'));
-                    card.querySelector('.image-view-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        window.open(d.photo1, '_blank');
-                    });
-                    grid.appendChild(card);
-                });
-            };
-
-            // --- 모달 관련 함수 ---
-            const openModal = (id, type) => {
-                const spot = type === 'restaurant' ? restaurantData.find(d => d.id == id) : null;
-                if (spot) {
-                    modalTitle.innerHTML = `${spot.icon} ${spot.name}`;
-                    modalBody.innerHTML = `
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-amber-50 p-4 rounded-lg"> <p class="font-semibold text-amber-800">대표 메뉴 1: ${spot.menu1}</p> <p class="text-sm text-gray-600">가격: ${spot.price1}</p> <a href="${spot.photo1}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a> </div>
-                            <div class="bg-red-50 p-4 rounded-lg"> <p class="font-semibold text-red-800">대표 메뉴 2: ${spot.menu2}</p> <p class="text-sm text-gray-600">가격: ${spot.price2}</p> <a href="${spot.photo2}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a> </div>
-                            <div class="bg-blue-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-blue-800">위치:</span> ${spot.address}</div>
-                            <div class="bg-green-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-green-800">영업 시간:</span> ${spot.hours}</div>
-                        </div>
-                        <div class="mt-4 bg-gray-50 p-4 rounded-lg"> <h4 class="font-bold text-lg text-gray-800 mb-2">❤️ 한줄평</h4> <p>"${spot.review}"</p> </div>`;
-                }
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.querySelector('.modal-content').classList.remove('scale-95');
-            };
-            const closeModal = () => { /* ... 기존과 동일 ... */ 
-                modal.classList.add('opacity-0');
-                modal.querySelector('.modal-content').classList.add('scale-95');
-                setTimeout(() => modal.classList.add('pointer-events-none'), 300);
-            };
-
-            // --- 비교 테이블 렌더링 ---
-            const renderCompareTables = () => { /* ... 기존과 동일 ... */ 
-                const container = document.getElementById('compare-tables');
-                container.innerHTML = '';
-                const categories = ['흑돼지', '해산물', '한식/해장국', '분식/기타', '카페/디저트'];
-                const headers = [ {key: 'name', label: '이름'}, {key: 'menu1', label: '대표 메뉴 1'}, {key: 'menu2', label: '대표 메뉴 2'}, {key: 'review', label: '한줄평'} ];
-                categories.forEach(cat => {
-                    const data = restaurantData.filter(d => d.category === cat);
-                    if (data.length === 0) return;
-                    const table = `
-                        <h3 class="text-2xl font-bold mb-4 text-[#9C6644]">${data.length > 0 ? data[0].icon : ''} ${cat} 비교</h3>
-                        <div class="overflow-x-auto bg-white rounded-lg shadow">
-                            <table class="w-full text-sm text-left text-gray-500">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                                    <tr>${headers.map(h => `<th scope="col" class="px-6 py-3">${h.label}</th>`).join('')}</tr>
-                                </thead>
-                                <tbody>
-                                    ${data.map(d => `
-                                        <tr class="bg-white border-b hover:bg-gray-50">
-                                            <td class="px-6 py-4 font-medium text-gray-900">${d.name}</td>
-                                            <td class="px-6 py-4">${d.menu1} (${d.price1})</td>
-                                            <td class="px-6 py-4">${d.menu2} (${d.price2})</td>
-                                            <td class="px-6 py-4 text-xs">"${d.review}"</td>
-                                        </tr>`).join('')}
-                                </tbody>
-                            </table>
-                        </div>`;
-                    container.innerHTML += table;
-                });
-            };
-            
-            // --- 맛집 지도 초기화 ---
-            const initRestaurantMap = () => {
-                 kakao.maps.load(() => {
-                    const mapContainer = document.getElementById('restaurant-map-container');
-                    const mapOption = { center: new kakao.maps.LatLng(33.3846, 126.5562), level: 10 };
-                    restaurantMap = new kakao.maps.Map(mapContainer, mapOption);
-                    
-                    restaurantMarkers.forEach(marker => marker.setMap(null));
-                    restaurantMarkers = [];
-                    restaurantData.forEach(spot => {
-                        if (!spot.lat || !spot.lng) return;
-                        const content = `<div class="custom-overlay-restaurant"><span class="custom-overlay-icon">${spot.icon}</span><div class="custom-overlay-label">${spot.name}</div></div>`;
-                        const overlay = new kakao.maps.CustomOverlay({
-                            position: new kakao.maps.LatLng(spot.lat, spot.lng),
-                            content: content, yAnchor: 1
-                        });
-                        overlay.a.addEventListener('click', () => openModal(spot.id, 'restaurant'));
-                        restaurantMarkers.push(overlay);
-                    });
-                    restaurantMarkers.forEach(marker => marker.setMap(restaurantMap));
-                });
-            };
-            
-            // --- 여행 경로(타임라인) 관련 함수들 ---
-            const initTimelineView = () => {
-                kakao.maps.load(() => {
-                    const mapContainer = document.getElementById('timeline-map-container');
-                    const mapOption = { center: new kakao.maps.LatLng(33.3846, 126.5562), level: 10 };
-                    timelineMap = new kakao.maps.Map(mapContainer, mapOption);
-
-                    document.getElementById('timeline-day-selector').addEventListener('click', (e) => {
-                        const btn = e.target.closest('.day-btn');
-                        if (btn) {
-                            appState.currentTravelDay = parseInt(btn.dataset.day);
-                            document.querySelectorAll('#timeline-day-selector .day-btn').forEach(b => b.classList.remove('active'));
-                            btn.classList.add('active');
-                            renderTimelineAndRoute(appState.currentTravelDay);
-                        }
-                    });
-                    renderTimelineAndRoute(appState.currentTravelDay);
-                });
-            };
-
-            const renderTimelineAndRoute = (day) => {
-                const dayData = travelData[day];
-                const listContainer = document.getElementById('timeline-list-container');
-                let listHtml = '<div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>';
-
-                // 이전 마커 및 폴리라인 제거
-                timelineMarkers.forEach(marker => marker.setMap(null));
-                timelineMarkers = [];
-                if(timelinePolyline) timelinePolyline.setMap(null);
-
-                dayData.forEach((item, index) => {
-                    listHtml += `
-                        <div class="timeline-item-container relative" data-index="${index}">
-                            <div class="absolute left-4 top-6 w-4 h-4 bg-white border-4 border-[#B08968] rounded-full" style="transform: translate(-50%, -50%);"></div>
-                            <div class="timeline-content ml-12 p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
-                                <div class="timeline-item cursor-pointer">
-                                    <span class="text-sm font-bold text-[#9C6644]">${item.time}</span>
-                                    <h3 class="font-semibold text-lg text-gray-800">${index + 1}. ${item.place}</h3>
-                                    <p class="text-gray-600">${item.icon} ${item.activity}</p>
-                                </div>
-                                <div class="mt-3 pt-3 border-t">
-                                    <button class="gemini-suggest-btn w-full text-left text-sm font-semibold text-[#9C6644] hover:text-[#7F5539]" data-place="${item.place}">주변 추천받기 ✨</button>
-                                </div>
-                            </div>
-                        </div>`;
-                    // 이동 시간 정보 추가
-                    if (index < dayData.length - 1 && dayData[index+1].duration) {
-                        listHtml += `<div class="travel-time-info"><span>🚗 약 ${dayData[index+1].duration}분 이동</span></div>`;
-                    }
-                });
-                listContainer.innerHTML = listHtml;
-                
-                const bounds = new kakao.maps.LatLngBounds();
-                const linePath = [];
-
-                dayData.forEach((item, index) => {
-                    const position = new kakao.maps.LatLng(item.lat, item.lng);
-                    linePath.push(position);
-                    bounds.extend(position);
-
-                    const content = `
-                        <div class="custom-overlay-path">
-                           <span class="icon">${item.icon}</span>
-                           <span class="number">${index + 1}</span>
-                           <div class="label">${item.place}</div>
-                        </div>`;
-                    const overlay = new kakao.maps.CustomOverlay({ position, content });
-                    
-                    overlay.a.addEventListener('click', () => {
-                        timelineMap.panTo(position);
-                        document.querySelectorAll('.timeline-item-container').forEach(c => c.classList.remove('active'));
-                        listContainer.querySelector(`[data-index="${index}"]`).classList.add('active');
-                    });
-                    
-                    overlay.setMap(timelineMap);
-                    timelineMarkers.push(overlay);
-                });
-
-                timelinePolyline = new kakao.maps.Polyline({
-                    path: linePath, strokeWeight: 4, strokeColor: '#7F5539', strokeOpacity: 0.8, strokeStyle: 'solid'
-                });
-                timelinePolyline.setMap(timelineMap);
-                timelineMap.setBounds(bounds);
-
-                listContainer.querySelectorAll('.timeline-item').forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        const container = e.currentTarget.closest('.timeline-item-container');
-                        const index = parseInt(container.dataset.index);
-                        const pos = new kakao.maps.LatLng(dayData[index].lat, dayData[index].lng);
-                        timelineMap.panTo(pos);
-                        document.querySelectorAll('.timeline-item-container').forEach(c => c.classList.remove('active'));
-                        container.classList.add('active');
-                        container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    });
-                });
-                listContainer.querySelectorAll('.gemini-suggest-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => getGeminiSuggestions(e.target.dataset.place));
-                });
-            };
-            
-            async function getGeminiSuggestions(placeName) {
-                if (GEMINI_API_KEY === "AIzaSyAHaulmvkZyChIOH1bDVpgtYjijqaiXefA" || !GEMINI_API_KEY) {
-                    alert("Gemini API 키를 입력해주세요."); return;
-                }
-                modalTitle.innerHTML = `✨ ${placeName} 주변 추천`;
-                modalBody.innerHTML = '<div class="loader"></div>';
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modal.querySelector('.modal-content').classList.remove('scale-95');
-
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
-                const prompt = `'${placeName}, 제주도' 근처의 현지인들이 좋아할 만한 숨겨진 맛집, 독특한 카페, 또는 가볼 만한 장소 3곳을 추천해 줘. 각 장소에 대한 설명은 한두 문장으로 간결하게 해주고, 추천 이유를 꼭 포함해줘.`;
-
-                try {
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
-                    if (!response.ok) throw new Error(`API 요청 실패: ${response.status}`);
-                    const result = await response.json();
-                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    modalBody.innerHTML = text ? text.replace(/\n/g, '<br>') : "추천 정보를 받아오지 못했습니다.";
-                } catch (error) {
-                    console.error("Gemini API 호출 중 오류 발생:", error);
-                    modalBody.innerHTML = '<p class="text-red-500">추천 정보를 불러오는 데 실패했습니다.</p>';
-                }
-            }
-
-            // --- 차트 및 초기화 로직 ---
-            const renderCharts = () => { /* ... 기존과 동일 ... */ 
-                const categoryCounts = restaurantData.reduce((acc, r) => { acc[r.category] = (acc[r.category] || 0) + 1; return acc; }, {});
-                const regionCounts = restaurantData.reduce((acc, r) => { acc[r.region] = (acc[r.region] || 0) + 1; return acc; }, {});
-                const chartColors = ['#B08968', '#DDB892', '#E6CCB2', '#EDE0D4', '#7F5539'];
-                if (categoryChartInstance) categoryChartInstance.destroy();
-                categoryChartInstance = new Chart(document.getElementById('categoryChart'), {
-                    type: 'pie', data: { labels: Object.keys(categoryCounts), datasets: [{ data: Object.values(categoryCounts), backgroundColor: chartColors }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } }
-                });
-                if (regionChartInstance) regionChartInstance.destroy();
-                regionChartInstance = new Chart(document.getElementById('regionChart'), {
-                    type: 'bar', data: { labels: Object.keys(regionCounts), datasets: [{ label: '맛집 수', data: Object.values(regionCounts), backgroundColor: chartColors[0] }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-                });
-            };
-
-            // --- 전역 이벤트 리스너 설정 및 초기화 ---
-            document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
-            document.querySelectorAll('.filter-btn.category-btn').forEach(btn => btn.addEventListener('click', () => {
-                document.querySelector('.filter-btn.category-btn.active').classList.remove('active');
-                btn.classList.add('active');
-                appState.filters.category = btn.dataset.category;
-                renderCards();
-            }));
-            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => e.target === modal && closeModal());
-
-            renderCards(); // 초기 뷰 렌더링
+        const originalTravelData = {1:[{time:"10:00",place:"제주국제공항",activity:"도착",lat:33.5104,lng:126.4913,icon:"✈️",duration:null},{time:"11:00",place:"명랑스낵",activity:"한치 튀김, 떡볶이",lat:33.415,lng:126.2625,icon:"🍜",duration:45},{time:"12:30",place:"풀베개",activity:"커피",lat:33.2533,lng:126.4837,icon:"☕",duration:40},{time:"14:00",place:"제주부영호텔&리조트",activity:"체크인",lat:33.2458,lng:126.4087,icon:"🏨",duration:15},{time:"15:00",place:"번네식당",activity:"갈치조림 식사",lat:33.2514,lng:126.5658,icon:"🍲",duration:30},{time:"16:30",place:"제주부영호텔&리조트",activity:"휴식",lat:33.2458,lng:126.4087,icon:"🛌",duration:30},{time:"18:30",place:"칠돈가 중문점",activity:"흑돼지 구이 식사",lat:33.2505,lng:126.417,icon:"🍖",duration:5},{time:"20:00",place:"제주부영호텔&리조트",activity:"휴식",lat:33.2458,lng:126.4087,icon:"🌙",duration:5}],2:[{time:"09:00",place:"제주선채향",activity:"전복칼국수 식사",lat:33.2351,lng:126.3115,icon:"🍜",duration:null},{time:"10:30",place:"위이",activity:"커피",lat:33.298,lng:126.32,icon:"☕",duration:15},{time:"12:00",place:"오는정 김밥",activity:"김밥 포장",lat:33.25,lng:126.563,icon:"🍙",duration:40},{time:"14:00",place:"아쿠아뷰티크",activity:"체크인",lat:33.5435,lng:126.6668,icon:"🏨",duration:70},{time:"17:00",place:"숙성도 함덕점",activity:"흑돼지 구이 식사",lat:33.543,lng:126.6675,icon:"🍖",duration:2},{time:"19:00",place:"미영이네 조천점",activity:"고등어 회 포장",lat:33.5323,lng:126.6908,icon:"🍣",duration:10},{time:"20:00",place:"아쿠아뷰티크",activity:"휴식",lat:33.5435,lng:126.6668,icon:"🌙",duration:10}]};
+        Object.assign(window, { restaurantData: originalRestaurantData, travelData: originalTravelData });
         });
     </script>
 </body>
 </html>
+
