@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>제주도 여행 계획 타임라인 (최종 디버깅용)</title>
+    <title>제주도 여행 계획 타임라인 (안정화 최종본)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .timeline-item-container.active .timeline-content {
@@ -57,7 +57,7 @@
         </aside>
         <main class="w-full lg:w-2/3 xl:w-3/4 h-[50vh] lg:h-screen">
             <div id="map" class="w-full h-full bg-gray-100 flex items-center justify-center text-center p-4 text-gray-500">
-                지도를 불러오는 중입니다... <br> 이 메시지가 사라지지 않으면 개발자 콘솔(F12)을 확인해주세요.
+                지도를 불러오는 중입니다...
             </div>
         </main>
     </div>
@@ -72,17 +72,13 @@
 
     <script>
         // --- 설정 영역 ---
-        /* [중요] API 키 입력 #1 
-          아래 "YOUR_KAKAO_APP_KEY" 부분을 **다시 한번 정확하게** 본인의 카카오맵 Javascript 키로 교체해주세요.
-          (기존 값을 지우고 새로 붙여넣는 것을 권장합니다.)
-        */
-        const KAKAO_APP_KEY = 'd3c3d2e4c30d1ef210332f70e5394b36';
+        /* [중요] API 키 입력 #1: 카카오맵 Javascript 키 */
+        const KAKAO_APP_KEY = "d3c3d2e4c30d1ef210332f70e5394b36";
 
-        /* [중요] API 키 입력 #2
-          아래 "YOUR_GEMINI_API_KEY" 부분을 본인의 Gemini API 키로 교체해주세요.
-        */
-        const GEMINI_API_KEY = 'AIzaSyAHaulmvkZyChIOH1bDVpgtYjijqaiXefA';
-
+        /* [중요] API 키 입력 #2: Gemini API 키 */
+        const GEMINI_API_KEY = "AIzaSyAHaulmvkZyChIOH1bDVpgtYjijqaiXefA";
+        
+        // --- 데이터 영역 ---
         const travelData = {
             1: [
                 { time: '10:00', place: '제주국제공항', activity: '도착', lat: 33.510413, lng: 126.491353, icon: '✈️' },
@@ -106,13 +102,13 @@
         };
 
         // --- 애플리케이션 로직 ---
-
         let map;
         let markers = [];
         let polyline;
         let currentDay = 1;
 
         function initMap() {
+            console.log("initMap: 지도 초기화를 시작합니다.");
             const mapContainer = document.getElementById('map');
             const mapOption = { 
                 center: new kakao.maps.LatLng(33.361665, 126.520412),
@@ -123,10 +119,12 @@
             setupEventListeners();
             setupModal();
             updateView();
+            console.log("initMap: 지도 초기화 및 모든 설정이 완료되었습니다.");
         }
-
-        // --- 디버깅 기능이 강화된 API 로더 ---
+        
+        // --- 안정성을 높인 API 로더 ---
         function loadKakaoMapAPI() {
+            console.log("loadKakaoMapAPI: 카카오맵 API 로드를 시도합니다.");
             if (!KAKAO_APP_KEY || KAKAO_APP_KEY === "YOUR_KAKAO_APP_KEY") {
                 document.getElementById('map').innerHTML = '카카오맵 API 키가 입력되지 않았습니다.<br>코드를 수정해주세요.';
                 console.error("카카오맵 API 키가 비어있습니다.");
@@ -146,9 +144,13 @@
             };
             document.head.appendChild(script);
         }
-        
-        loadKakaoMapAPI(); // 애플리케이션 시작
 
+        // DOM이 완전히 로드된 후 애플리케이션을 시작합니다.
+        document.addEventListener('DOMContentLoaded', () => {
+             console.log("DOMContentLoaded: 문서 로드가 완료되었습니다. API 로드를 시작합니다.");
+             loadKakaoMapAPI();
+        });
+        
         // ...(이하 다른 함수들은 이전과 동일)...
         function setupEventListeners(){const daySelector=document.getElementById("day-selector");daySelector.addEventListener("click",e=>{const t=e.target.closest(".day-btn");t&&parseInt(t.dataset.day)!==currentDay&&(currentDay=parseInt(t.dataset.day),updateView(),updateButtonStyles())})}function setupModal(){const e=document.getElementById("gemini-modal"),t=document.getElementById("close-modal-btn");t.addEventListener("click",()=>e.classList.add("hidden")),e.addEventListener("click",t=>{t.target===e&&e.classList.add("hidden")})}async function getGeminiSuggestions(e){if("YOUR_GEMINI_API_KEY"===GEMINI_API_KEY||!GEMINI_API_KEY)return void alert("Gemini API 키를 입력해주세요.");const t=document.getElementById("gemini-modal"),n=document.getElementById("modal-content");t.classList.remove("hidden"),n.innerHTML='<div class="loader"></div>';const o=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`,a=`'${e}, 제주도' 근처의 현지인들이 좋아할 만한 숨겨진 맛집, 독특한 카페, 또는 가볼 만한 장소 3곳을 추천해 줘. 각 장소에 대한 설명은 한두 문장으로 간결하게 해주고, 추천 이유를 꼭 포함해줘.`;try{const e=await fetch(o,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:a}]}]})});if(!e.ok)throw new Error(`API 요청 실패: ${e.status}`);const t=(await e.json())?.candidates?.[0]?.content?.parts?.[0]?.text;if(t)n.innerHTML=t.replace(/\n/g,"<br>");else throw new Error("Invalid API response structure")}catch(e){console.error("Gemini API 호출 중 오류 발생:",e),n.innerHTML='<p class="text-red-500">추천 정보를 불러오는 데 실패했습니다. API 키와 네트워크 연결을 확인해주세요.</p>'}}function updateButtonStyles(){document.querySelectorAll(".day-btn").forEach(e=>{parseInt(e.dataset.day)===currentDay?(e.classList.remove("bg-white","text-stone-700"),e.classList.add("bg-teal-600","text-white")):(e.classList.remove("bg-teal-600","text-white"),e.classList.add("bg-white","text-stone-700"))})}function clearMap(){markers.forEach(e=>e.overlay.setMap(null)),markers=[],polyline&&polyline.setMap(null)}function createTimelineHTML(e){return`\n                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-stone-200"></div>\n                ${e.map((e,t)=>`\n                    <div class="timeline-item-container relative mb-4" data-index="${t}">\n                        <div class="timeline-dot absolute left-4 top-6 w-4 h-4 bg-white border-4 border-teal-500 rounded-full" style="transform: translate(-50%, -50%);"></div>\n                        <div class="timeline-content ml-12 p-4 bg-white rounded-lg shadow-md">\n                            <div class="timeline-item cursor-pointer">\n                                <span class="text-sm font-bold text-teal-600">${e.time}</span>\n                                <h3 class="font-semibold text-lg text-stone-800">${t+1}. ${e.place}</h3>\n                                <p class="text-stone-600">${e.icon} ${e.activity}</p>\n                            </div>\n                            <div class="mt-3 pt-3 border-t border-stone-200">\n                                <button class="gemini-suggest-btn w-full text-left text-sm font-semibold text-teal-600 hover:text-teal-800 transition-colors" data-place="${e.place}">주변 추천받기 ✨</button>\n                            </div>\n                        </div>\n                    </div>\n                `).join("")}\n            `}function updateView(){clearMap();const e=travelData[currentDay];document.getElementById("timeline-container").innerHTML=createTimelineHTML(e);const t=new kakao.maps.LatLngBounds,n=[];e.forEach((e,o)=>{const a=new kakao.maps.LatLng(e.lat,e.lng);n.push(a),t.extend(a);const i=document.createElement("div");i.className="custom-overlay-content",i.innerHTML=o+1;const d=new kakao.maps.CustomOverlay({position:a,content:i,yAnchor:1.2});d.setMap(map),i.addEventListener("click",()=>{panTo(a),highlightTimelineItem(o)}),markers.push({overlay:d,position:a,index:o})}),map.setBounds(t),polyline=new kakao.maps.Polyline({path:n,strokeWeight:4,strokeColor:"#0D9488",strokeOpacity:.8,strokeStyle:"solid"}),polyline.setMap(map),addTimelineEventListeners()}function addTimelineEventListeners(){document.getElementById("timeline-container").addEventListener("click",e=>{const t=e.target.closest(".timeline-item");if(t){const n=t.closest(".timeline-item-container"),o=parseInt(n.dataset.index),a=markers.find(e=>e.index===o);a&&(panTo(a.position),highlightTimelineItem(o))}const n=e.target.closest(".gemini-suggest-btn");n&&(e.stopPropagation(),getGeminiSuggestions(n.dataset.place))})}function panTo(e){map.panTo(e)}function highlightTimelineItem(e){document.querySelectorAll(".timeline-item-container").forEach((t,n)=>{n===e?t.classList.contains("active")||(t.classList.add("active"),t.scrollIntoView({behavior:"smooth",block:"center"})):t.classList.remove("active")})}
     </script>
