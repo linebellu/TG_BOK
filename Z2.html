@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제주도 여행 계획 타임라인</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8a2f8b538f98c6b84b3f815243407952&onload=initMap"></script>
+    <!-- Chosen Palette: Warm Neutrals and Soft Sage -->
+    <!-- Application Structure Plan: 이 애플리케이션은 사용자가 제주도 여행 일정을 효과적으로 시각화하고 이해할 수 있도록 설계되었습니다. 핵심 구조는 '타임라인 리스트'와 '인터랙티브 지도'를 결합한 2단 분할 레이아웃입니다. 사용자는 'Day 1', 'Day 2' 버튼을 통해 날짜별 일정을 전환할 수 있으며, 이 상호작용은 지도와 타임라인에 즉시 반영됩니다. 타임라인의 특정 항목을 클릭하면 지도의 해당 위치로 초점이 이동하고, 지도 위의 마커를 클릭하면 타임라인에서 해당 항목이 강조됩니다. 이러한 양방향 상호작용은 시간적 순서와 지리적 경로 사이의 관계를 직관적으로 연결해 주어, 사용자가 이동 동선을 쉽게 파악하고 계획을 검토하는 데 최적화된 경험을 제공합니다. -->
+    <!-- Visualization & Content Choices: 사용자의 여행 계획 데이터를 시각화하기 위해, 지리 정보는 카카오맵 API를 활용한 인터랙티브 지도로 표현했습니다. 각 방문지는 지도 위에 번호가 매겨진 마커로 표시되어 순서를 명확히 합니다. 시간 순서에 따른 일정은 수직 타임라인 형태로 구성하여 가독성을 높였습니다. 날짜별 이동 경로는 폴리라인(polyline)을 사용해 지도 위에 시각적으로 그려주어 전체적인 동선을 한눈에 파악할 수 있게 했습니다. 사용자가 날짜 버튼을 클릭하면 지도와 타임라인의 내용이 동적으로 변경되는 인터랙션을 구현하여, 정적인 텍스트 목록보다 훨씬 능동적이고 직관적인 정보 탐색이 가능하도록 설계했습니다. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .timeline-item .timeline-dot {
+            transform: translate(-50%, -50%);
+        }
+        .timeline-item .timeline-content {
+            transition: all 0.3s ease;
+        }
+        .timeline-item.active .timeline-content {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800">
+
+    <div id="app" class="flex flex-col lg:flex-row w-full min-h-screen">
+        
+        <aside class="w-full lg:w-1/3 xl:w-1/4 p-6 bg-white shadow-lg overflow-y-auto">
+            <header class="mb-6 pb-4 border-b border-stone-200">
+                <h1 class="text-3xl font-bold text-stone-900">제주 여행 타임라인</h1>
+                <p class="text-stone-500 mt-1">10월 7일 ~ 10월 8일</p>
+            </header>
+
+            <nav id="day-selector" class="flex gap-2 mb-6">
+                <button data-day="1" class="day-btn flex-1 bg-teal-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-teal-700 transition-all duration-300">Day 1</button>
+                <button data-day="2" class="day-btn flex-1 bg-white text-stone-700 font-bold py-3 px-4 rounded-lg shadow-md hover:bg-stone-100 transition-all duration-300">Day 2</button>
+            </nav>
+
+            <div id="timeline-container" class="relative">
+            </div>
+        </aside>
+
+        <main class="w-full lg:w-2/3 xl:w-3/4 h-[50vh] lg:h-screen">
+            <div id="map" class="w-full h-full"></div>
+        </main>
+    </div>
+
+    <script>
+        const travelData = {
+            1: [
+                { time: '10:00', place: '제주국제공항', activity: '도착', lat: 33.510413, lng: 126.491353, icon: '✈️' },
+                { time: '11:00', place: '명랑스낵', activity: '한치 튀김, 떡볶이', lat: 33.31301, lng: 126.29949, icon: '🍜' },
+                { time: '12:30', place: '풀베개', activity: '커피', lat: 33.31688, lng: 126.30252, icon: '☕' },
+                { time: '14:00', place: '제주부영호텔&리조트', activity: '체크인', lat: 33.2458, lng: 126.4087, icon: '🏨' },
+                { time: '15:00', place: '번네식당', activity: '갈치조림 식사', lat: 33.2494, lng: 126.4252, icon: '🍲' },
+                { time: '16:30', place: '제주부영호텔&리조트', activity: '휴식', lat: 33.2458, lng: 126.4087, icon: '🛌' },
+                { time: '18:30', place: '칠돈가 중문점', activity: '흑돼지 구이 식사', lat: 33.2505, lng: 126.4170, icon: '🍖' },
+                { time: '20:00', place: '제주부영호텔&리조트', activity: '휴식', lat: 33.2458, lng: 126.4087, icon: '🌙' }
+            ],
+            2: [
+                { time: '09:00', place: '제주선채향', activity: '전복칼국수 식사', lat: 33.2483, lng: 126.4251, icon: '🍜' },
+                { time: '10:30', place: '위이', activity: '커피', lat: 33.2536, lng: 126.4385, icon: '☕' },
+                { time: '12:00', place: '오는정 김밥', activity: '김밥 포장', lat: 33.2497, lng: 126.5623, icon: '🍙' },
+                { time: '14:00', place: '아쿠아뷰티크', activity: '체크인', lat: 33.5435, lng: 126.6668, icon: '🏨' },
+                { time: '17:00', place: '숙성도 함덕점', activity: '흑돼지 구이 식사', lat: 33.5430, lng: 126.6675, icon: '🍖' },
+                { time: '19:00', place: '미영이네 조천점', activity: '고등어 회 포장', lat: 33.5450, lng: 126.6974, icon: '🍣' },
+                { time: '20:00', place: '아쿠아뷰티크', activity: '휴식', lat: 33.5435, lng: 126.6668, icon: '🌙' }
+            ]
+        };
+
+        let map;
+        let markers = [];
+        let polyline;
+        let currentDay = 1;
+
+        function initMap() {
+            const mapContainer = document.getElementById('map');
+            const mapOption = { 
+                center: new kakao.maps.LatLng(33.361665, 126.520412),
+                level: 10
+            };
+            map = new kakao.maps.Map(mapContainer, mapOption);
+            
+            const daySelector = document.getElementById('day-selector');
+            daySelector.addEventListener('click', (e) => {
+                const button = e.target.closest('.day-btn');
+                if (button) {
+                    const day = parseInt(button.dataset.day);
+                    if (day !== currentDay) {
+                        currentDay = day;
+                        updateView();
+                        updateButtonStyles();
+                    }
+                }
+            });
+
+            updateView();
+        }
+
+        function updateButtonStyles() {
+            const buttons = document.querySelectorAll('.day-btn');
+            buttons.forEach(btn => {
+                if (parseInt(btn.dataset.day) === currentDay) {
+                    btn.classList.remove('bg-white', 'text-stone-700');
+                    btn.classList.add('bg-teal-600', 'text-white');
+                } else {
+                    btn.classList.remove('bg-teal-600', 'text-white');
+                    btn.classList.add('bg-white', 'text-stone-700');
+                }
+            });
+        }
+        
+        function clearMap() {
+            markers.forEach(markerInfo => markerInfo.marker.setMap(null));
+            markers = [];
+            if (polyline) {
+                polyline.setMap(null);
+            }
+        }
+
+        function createTimelineHTML(dayData) {
+            return `
+                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-stone-200"></div>
+                ${dayData.map((item, index) => `
+                    <div class="timeline-item relative mb-4" data-index="${index}">
+                        <div class="timeline-dot absolute left-4 top-4 w-4 h-4 bg-white border-4 border-teal-500 rounded-full"></div>
+                        <div class="timeline-content ml-12 p-4 bg-white rounded-lg shadow-md border border-stone-100 cursor-pointer">
+                            <span class="text-sm font-bold text-teal-600">${item.time}</span>
+                            <h3 class="font-semibold text-lg text-stone-800">${index+1}. ${item.place}</h3>
+                            <p class="text-stone-600">${item.icon} ${item.activity}</p>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function updateView() {
+            clearMap();
+            const dayData = travelData[currentDay];
+            const timelineContainer = document.getElementById('timeline-container');
+
+            timelineContainer.innerHTML = createTimelineHTML(dayData);
+            
+            const bounds = new kakao.maps.LatLngBounds();
+            const linePath = [];
+
+            dayData.forEach((item, index) => {
+                const position = new kakao.maps.LatLng(item.lat, item.lng);
+                linePath.push(position);
+                bounds.extend(position);
+                
+                const markerContent = `<div style="background-color: #14B8A6; color: white; padding: 4px 8px; border-radius: 9999px; font-weight: bold; font-size: 14px; text-align: center;">${index + 1}</div>`;
+                
+                const customOverlay = new kakao.maps.CustomOverlay({
+                    position: position,
+                    content: markerContent,
+                    yAnchor: 1.2
+                });
+
+                markers.push({ marker: customOverlay, position: position, index: index });
+                customOverlay.setMap(map);
+                 
+                const markerElement = customOverlay.a;
+                if (markerElement) {
+                    markerElement.addEventListener('click', () => {
+                        panTo(position);
+                        highlightTimelineItem(index);
+                    });
+                }
+            });
+            
+            map.setBounds(bounds);
+            
+            polyline = new kakao.maps.Polyline({
+                path: linePath,
+                strokeWeight: 4,
+                strokeColor: '#0D9488',
+                strokeOpacity: 0.8,
+                strokeStyle: 'solid'
+            });
+            polyline.setMap(map);
+
+            addTimelineEventListeners();
+        }
+
+        function addTimelineEventListeners() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const index = parseInt(item.dataset.index);
+                    const markerInfo = markers.find(m => m.index === index);
+                    if (markerInfo) {
+                        panTo(markerInfo.position);
+                        highlightTimelineItem(index);
+                    }
+                });
+            });
+        }
+        
+        function panTo(position) {
+            map.panTo(position);
+        }
+
+        function highlightTimelineItem(index) {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
