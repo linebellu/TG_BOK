@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>그녀를 위한 완벽한 제주 맛집 가이드 (카카오맵 적용)</title>
+    <title>그녀를 위한 완벽한 제주 여행 가이드 (경로 통합본)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- [중요] YOUR_KAKAO_APP_KEY 부분에 발급받은 JavaScript 키를 입력하세요. -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d3c3d2e4c30d1ef210332f70e5394b36&autoload=false"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d3c3d2e4c30d1ef210332f70e5394b36&libraries=services&autoload=false"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -23,10 +23,10 @@
             color: #B08968;
             border-bottom-color: #B08968;
         }
-        .filter-btn {
+        .filter-btn, .day-btn {
             transition: all 0.2s ease-in-out;
         }
-        .filter-btn.active {
+        .filter-btn.active, .day-btn.active {
             background-color: #9C6644;
             color: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -34,55 +34,44 @@
         .modal-overlay { transition: opacity 0.3s ease; }
         .modal-content { transition: transform 0.3s ease; }
         .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: auto;
-            height: 300px;
-            max-height: 350px;
+            position: relative; width: 100%; max-width: 500px; margin: auto; height: 300px; max-height: 350px;
         }
         @media (min-width: 768px) {
             .chart-container { height: 350px; max-height: 400px; }
         }
-        /* 카카오맵 커스텀 오버레이 스타일 */
-        .custom-overlay {
-            position: relative;
-            background-color: white;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            transition: transform 0.2s ease;
+        /* 카카오맵 커스텀 오버레이 (맛집 지도용) */
+        .custom-overlay-restaurant {
+            position: relative; background-color: white; border-radius: 50%; width: 44px; height: 44px; display: flex;
+            justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translate(-50%, -50%); cursor: pointer; transition: transform 0.2s ease;
         }
-        .custom-overlay:hover {
-            transform: translate(-50%, -50%) scale(1.2);
-            z-index: 10;
-        }
-        .custom-overlay-icon {
-            font-size: 1.5rem;
-        }
+        .custom-overlay-restaurant:hover { transform: translate(-50%, -50%) scale(1.2); z-index: 10; }
+        .custom-overlay-icon { font-size: 1.5rem; }
         .custom-overlay-label {
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.75);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 13px;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
+            position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
+            color: white; padding: 4px 8px; border-radius: 6px; font-size: 13px; white-space: nowrap;
+            opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
         }
-        .custom-overlay:hover .custom-overlay-label {
-            opacity: 1;
+        .custom-overlay-restaurant:hover .custom-overlay-label { opacity: 1; }
+        
+        /* 타임라인 스타일 */
+        .timeline-item-container.active .timeline-content {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #9C6644;
+        }
+        .timeline-content { transition: all 0.3s ease; border: 2px solid transparent; }
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #9C6644; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 카카오맵 커스텀 오버레이 (경로 지도용) */
+        .custom-overlay-path {
+            background-color: #9C6644; color: white; padding: 4px 8px; border-radius: 9999px; font-weight: bold;
+            font-size: 14px; text-align: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translate(-50%, -100%);
         }
     </style>
 </head>
@@ -91,19 +80,22 @@
     <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-[#7F5539] mb-2">To. My Girlfriend ❤️</h1>
-            <p class="text-lg text-gray-600">우리가 함께 갈 제주 맛집들, 내가 완벽하게 다시 정리했어!</p>
+            <p class="text-lg text-gray-600">우리가 함께 갈 제주 맛집과 여행 경로, 내가 완벽하게 다시 정리했어!</p>
         </header>
 
         <nav class="flex justify-center border-b border-yellow-800/20 mb-8 space-x-2 sm:space-x-4 md:space-x-8">
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500 active" data-view="explore">맛집 탐색</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="compare">카테고리별 비교</button>
-            <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="map">지도에서 위치 보기</button>
+            <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="map">맛집 지도</button>
+            <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="timeline">우리의 여행 경로</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="insights">우리의 맛집 취향</button>
         </nav>
 
         <main>
+            <!-- 맛집 탐색 View -->
             <section id="explore-view">
-                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
+                <!-- ... 기존 맛집 탐색 UI ... -->
+                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                     <p class="text-gray-700 text-center leading-relaxed">
                         네가 가고 싶다고 했던 제주 맛집 리스트야! 필터로 편하게 찾아보고, 카드를 눌러서 자세한 정보를 확인해봐. <br class="hidden sm:block"> '사진 보기'를 누르면 다른 사람들이 올린 실제 음식 사진들을 볼 수 있어!
                     </p>
@@ -125,6 +117,7 @@
                 <p id="no-results" class="text-center text-gray-500 py-12 hidden">선택한 조건에 맞는 맛집이 없어!</p>
             </section>
             
+            <!-- 카테고리별 비교 View -->
             <section id="compare-view" class="hidden">
                  <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                      <p class="text-gray-700 text-center leading-relaxed">
@@ -134,16 +127,38 @@
                  <div id="compare-tables" class="space-y-12"></div>
             </section>
             
+            <!-- 맛집 지도 View -->
             <section id="map-view" class="hidden">
                 <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                      <p class="text-gray-700 text-center leading-relaxed">
                          우리가 갈 맛집들이 제주도 어디에 있는지 지도에 표시해봤어. 이걸로 여행 동선 짜면 정말 편할거야! 아이콘을 클릭하면 자세한 정보가 나와.
                      </p>
                 </div>
-                <!-- 카카오맵이 표시될 컨테이너 -->
-                <div id="kakao-map" class="w-full h-[60vh] md:h-[70vh] rounded-lg shadow-lg"></div>
+                <div id="restaurant-map-container" class="w-full h-[60vh] md:h-[70vh] rounded-lg shadow-lg"></div>
             </section>
 
+            <!-- 여행 경로 View -->
+            <section id="timeline-view" class="hidden">
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
+                    <p class="text-gray-700 text-center leading-relaxed">
+                        우리의 1박 2일 여행 경로야! 타임라인을 클릭하면 지도가 움직여. <br class="hidden sm:block"> '주변 추천받기' 버튼으로 즉흥적으로 새로운 곳을 찾아보는 재미도 놓치지 마!
+                    </p>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <aside class="w-full lg:w-2/5 xl:w-1/3">
+                        <div id="timeline-day-selector" class="flex gap-2 mb-6">
+                            <button data-day="1" class="day-btn flex-1 border border-gray-300 font-bold py-3 px-4 rounded-lg active">Day 1</button>
+                            <button data-day="2" class="day-btn flex-1 border border-gray-300 font-bold py-3 px-4 rounded-lg">Day 2</button>
+                        </div>
+                        <div id="timeline-list-container" class="relative max-h-[60vh] overflow-y-auto pr-2"></div>
+                    </aside>
+                    <main class="w-full lg:w-3/5 xl:w-2/3 h-[60vh] lg:h-auto">
+                         <div id="timeline-map-container" class="w-full h-full rounded-lg shadow-lg"></div>
+                    </main>
+                </div>
+            </section>
+
+            <!-- 인사이트 View -->
             <section id="insights-view" class="hidden">
                  <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm mb-8">
                      <p class="text-gray-700 text-center leading-relaxed">
@@ -153,21 +168,18 @@
                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                      <div class="bg-white p-6 rounded-xl shadow-md">
                          <h3 class="text-xl font-semibold text-center mb-4">우리의 맛집 카테고리</h3>
-                         <div class="chart-container">
-                             <canvas id="categoryChart"></canvas>
-                         </div>
+                         <div class="chart-container"><canvas id="categoryChart"></canvas></div>
                      </div>
                      <div class="bg-white p-6 rounded-xl shadow-md">
                          <h3 class="text-xl font-semibold text-center mb-4">선호 지역 분포</h3>
-                         <div class="chart-container">
-                             <canvas id="regionChart"></canvas>
-                         </div>
+                         <div class="chart-container"><canvas id="regionChart"></canvas></div>
                      </div>
                  </div>
             </section>
         </main>
     </div>
 
+    <!-- 공용 모달 -->
     <div id="modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
         <div class="modal-content bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col transform scale-95">
             <div id="modal-header" class="p-5 border-b flex justify-between items-center bg-gray-50">
@@ -181,15 +193,17 @@
     </div>
 
     <script>
+        // [중요] API 키 입력: Gemini API 키
+        const GEMINI_API_KEY = "AIzaSyAHaulmvkZyChIOH1bDVpgtYjijqaiXefA";
+
+        // --- 데이터 영역 ---
         const restaurantData = [
-            // 분식/기타 & 카페 (위도/경도 추가)
+            // ... 기존 restaurantData ...
             { id: 1, name: "아라찐빵", category: "분식/기타", region: "북부", menu1: "찐빵", price1: "1,000원", photo1: "https://search.naver.com/search.naver?where=image&query=아라찐빵+찐빵", menu2: "꽈배기", price2: "1,000원", photo2: "https://search.naver.com/search.naver?where=image&query=아라찐빵+꽈배기", review: "제주 현지인들이 인정하는 숨은 맛집. 팥소가 너무 달지 않고 피가 쫀득쫀득해서 남녀노소 모두 좋아한다.", hours: "09:00 - 18:00 (일요일 휴무)", address: "제주시 인다1길 12", lat: 33.4896, lng: 126.5412, icon: '🥟'},
             { id: 2, name: "오는정김밥", category: "분식/기타", region: "남부", menu1: "오는정김밥", price1: "3,500원", photo1: "https://search.naver.com/search.naver?where=image&query=오는정김밥", menu2: "치즈김밥", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=오는정김밥+치즈김밥", review: "전국구 명성의 김밥. 바삭하게 튀긴 유부가 들어가 독특한 식감과 고소한 맛을 낸다. 전화 예약 필수.", hours: "10:00 - 20:00 (일요일 휴무)", address: "서귀포시 동문동로 2", lat: 33.2500, lng: 126.5630, icon: '🍙'},
             { id: 3, name: "풀베개", category: "카페/디저트", region: "남부", menu1: "당근 케이크", price1: "7,500원", photo1: "https://search.naver.com/search.naver?where=image&query=풀베개+당근케이크", menu2: "흑임자갸또", price2: "7,500원", photo2: "https://search.naver.com/search.naver?where=image&query=풀베개+흑임자갸또", review: "조용한 주택가에 위치한 디저트 카페. 꾸덕하고 진한 크림치즈와 시나몬 향이 매력적인 당근 케이크가 가장 유명하다.", hours: "11:00 - 19:00 (수요일 휴무)", address: "서귀포시 이어도로595번길 20-3", lat: 33.2533, lng: 126.4837, icon: '🍰'},
             { id: 5, name: "명랑스낵", category: "분식/기타", region: "서부", menu1: "흑돼지 튀김", price1: "9,000원", photo1: "https://search.naver.com/search.naver?where=image&query=명랑스낵+흑돼지튀김", menu2: "한치 튀김", price2: "9,000원", photo2: "https://search.naver.com/search.naver?where=image&query=명랑스낵+한치튀김", review: "협재해변 바로 앞에 위치한 분식집. 바삭하고 고소한 흑돼지 튀김이 맥주와 잘 어울린다.", hours: "11:30 - 19:30 (수요일 휴무)", address: "제주시 한림읍 한림로 1480", lat: 33.4150, lng: 126.2625, icon: '🍤'},
             { id: 10, name: "제주시새우리", category: "분식/기타", region: "북부", menu1: "딱새우김밥", price1: "7,500원", photo1: "https://search.naver.com/search.naver?where=image&query=제주시새우리+딱새우김밥", menu2: "간장새우김밥", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=제주시새우리+간장새우김밥", review: "공항 근처에 위치해 포장하기 좋은 김밥 맛집. 바삭하게 튀긴 딱새우 패티가 통으로 들어가 식감과 맛이 훌륭하다.", hours: "09:00 - 20:30", address: "제주시 무근성7길 24", lat: 33.5152, lng: 126.5204, icon: '🦐'},
-            
-            // 해산물 (위도/경도 추가)
             { id: 4, name: "점점", category: "해산물", region: "서부", menu1: "통돌문어 해물라면", price1: "18,000원", photo1: "https://search.naver.com/search.naver?where=image&query=점점+통돌문어+해물라면", menu2: "흑돼지 왕돈까스", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=점점+흑돼지+왕돈까스", review: "돌문어 한 마리가 통째로 들어간 압도적인 비주얼의 해물라면이 시그니처 메뉴. 판포포구 뷰도 훌륭하다.", hours: "09:00 - 18:00 (화요일 휴무)", address: "제주시 한경면 판포1길 2", lat: 33.3646, lng: 126.2104, icon: '🐙'},
             { id: 6, name: "상상 함덕점", category: "해산물", region: "북부", menu1: "통문어 해물라면", price1: "18,000원", photo1: "https://search.naver.com/search.naver?where=image&query=상상+함덕점+통문어라면", menu2: "전복 해물라면", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=상상+함덕점+전복라면", review: "함덕해수욕장 바로 앞 오션뷰 맛집. 문어와 각종 해산물이 푸짐하게 들어가 국물이 시원하다.", hours: "08:30 - 21:00", address: "제주시 조천읍 조함해안로 525", lat: 33.5435, lng: 126.6668, icon: '🦀'},
             { id: 7, name: "미영이네 조천점", category: "해산물", region: "북부", menu1: "고등어회 (중)", price1: "70,000원", photo1: "https://search.naver.com/search.naver?where=image&query=미영이네+조천점+고등어회", menu2: "방어회 (계절)", price2: "싯가", photo2: "https://search.naver.com/search.naver?where=image&query=미영이네+조천점+방어회", review: "모슬포 본점의 명성을 그대로! 비린 맛 없이 극강의 신선함과 고소함을 자랑하는 고등어회가 일품.", hours: "16:00 - 22:00", address: "제주시 조천읍 함와로 510", lat: 33.5323, lng: 126.6908, icon: '🐠'},
@@ -205,8 +219,6 @@
             { id: 18, name: "번네식당", category: "해산물", region: "남부", menu1: "갈치조림 (소)", price1: "40,000원", photo1: "https://search.naver.com/search.naver?where=image&query=번네식당+갈치조림", menu2: "옥돔구이", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=번네식당+옥돔구이", review: "서귀포 올레시장 근처에 위치한 현지인 맛집. 진하고 칼칼한 국물의 갈치조림이 일품이다.", hours: "09:00 - 21:00", address: "서귀포시 중앙로79번길 5", lat: 33.2514, lng: 126.5658, icon: '🔥'},
             { id: 19, name: "조천수산", category: "해산물", region: "북부", menu1: "모듬회 포장 (소)", price1: "30,000원", photo1: "https://search.naver.com/search.naver?where=image&query=조천수산+모듬회", menu2: "고등어회 포장", price2: "25,000원", photo2: "https://search.naver.com/search.naver?where=image&query=조천수산+고등어회", review: "압도적인 가성비를 자랑하는 포장 전문 횟집. 저렴한 가격에 신선하고 두툼한 회를 푸짐하게 즐길 수 있다.", hours: "10:00 - 20:00", address: "제주시 조천읍 신북로 231", lat: 33.5413, lng: 126.6575, icon: '🎏'},
             { id: 20, name: "제주선채향", category: "해산물", region: "남부", menu1: "보말 칼국수", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=제주선채향+보말칼국수", menu2: "해물파전", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=제주선채향+해물파전", review: "진한 보말(바다 고둥) 내장으로 국물을 내어 깊고 고소한 맛이 일품인 칼국수 전문점.", hours: "09:00 - 20:00", address: "서귀포시 안덕면 사계해안로 17", lat: 33.2351, lng: 126.3115, icon: '🌊'},
-            
-            // 흑돼지 (위도/경도 추가)
             { id: 21, name: "송당회관", category: "흑돼지", region: "동부", menu1: "흑돼지 두루치기", price1: "10,000원 (1인)", photo1: "https://search.naver.com/search.naver?where=image&query=송당회관+흑돼지두루치기", menu2: "볶음밥", price2: "2,000원", photo2: "https://search.naver.com/search.naver?where=image&query=송당회관+볶음밥", review: "제주 동쪽 중산간에 위치한 가성비 맛집. 저렴한 가격에 푸짐한 흑돼지 두루치기를 맛볼 수 있다.", hours: "10:00 - 20:00", address: "제주시 구좌읍 중산간동로 2253", lat: 33.4800, lng: 126.7925, icon: '🐷'},
             { id: 22, name: "깡촌흑돼지 함덕본점", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "63,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=깡촌흑돼지+함덕", menu2: "김치찌개", price2: "7,000원", photo2: "https://search.naver.com/search.naver?where=image&query=깡촌흑돼지+김치찌개", review: "초벌구이를 해서 나와 육즙이 가득한 흑돼지를 맛볼 수 있다. 직원들이 직접 구워주어 편하게 식사할 수 있다.", hours: "12:00 - 22:00", address: "제주시 조천읍 신북로 493", lat: 33.5417, lng: 126.6690, icon: '🐖'},
             { id: 23, name: "탑부평 본점", category: "흑돼지", region: "남부", menu1: "흑돼지 생오겹살", price1: "20,000원 (200g)", photo1: "https://search.naver.com/search.naver?where=image&query=탑부평+본점+흑돼지", menu2: "된장찌개", price2: "2,000원", photo2: "https://search.naver.com/search.naver?where=image&query=탑부평+된장찌개", review: "서귀포 현지인들이 많이 찾는 흑돼지 맛집. 두툼하고 쫄깃한 오겹살의 퀄리티가 매우 높다.", hours: "16:00 - 22:00", address: "서귀포시 부두로 21", lat: 33.2450, lng: 126.5668, icon: '🖤'},
@@ -220,29 +232,51 @@
             { id: 31, name: "숙성도 중문점", category: "흑돼지", region: "남부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+중문", menu2: "갈치속젓 볶음밥", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+갈치속젓볶음밥", review: "최고의 흑돼지를 중문에서 맛볼 수 있다. 고기 퀄리티와 서비스 모두 훌륭하며, 감칠맛 나는 갈치속젓 볶음밥으로 마무리하는 것이 인기.", hours: "12:00 - 22:00", address: "서귀포시 일주서로 966", lat: 33.2530, lng: 126.4255, icon: '🏆'},
             { id: 32, name: "숙성도 제주본점", category: "흑돼지", region: "북부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+노형본점", menu2: "명란젓", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+명란젓", review: "숙성도 신화의 시작점. 고사리, 백김치, 명란젓 등 다양한 곁들임과 함께 즐기는 숙성 흑돼지의 맛이 일품.", hours: "12:00 - 22:00", address: "제주시 원노형로 41", lat: 33.4855, lng: 126.4815, icon: '🥇'},
             { id: 33, name: "숙성도 함덕점", category: "흑돼지", region: "북부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+함덕", menu2: "960숙성 뼈등심", price2: "28,000원 (1인)", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+뼈등심", review: "함덕해수욕장 바로 앞에 위치해 오션뷰를 즐기며 식사할 수 있다. 한정 판매하는 뼈등심 메뉴가 특별하다.", hours: "12:00 - 22:00", address: "제주시 조천읍 조함해안로 514", lat: 33.5430, lng: 126.6675, icon: '🌊'},
-            
-            // 한식/해장국 (위도/경도 추가)
             { id: 34, name: "모다정", category: "한식/해장국", region: "남부", menu1: "전복 두루치기(중)", price1: "45,000원", photo1: "https://search.naver.com/search.naver?where=image&query=모다정+전복두루치기", menu2: "전복 성게 돌솥밥", price2: "17,000원", photo2: "https://search.naver.com/search.naver?where=image&query=모다정+전복성게돌솥밥", review: "전복, 흑돼지, 딱새우, 오징어 등 다양한 재료가 들어간 두루치기가 대표 메뉴. 매콤달콤한 양념이 입맛을 돋운다.", hours: "09:00 - 21:00", address: "서귀포시 이어도로 1021", lat: 33.2597, lng: 126.4984, icon: '❤️'},
             { id: 35, name: "산지해장국 성산점", category: "한식/해장국", region: "동부", menu1: "소고기 해장국", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=산지해장국+성산점", menu2: "내장탕", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=산지해장국+내장탕", review: "제주식 해장국의 정석. 선지와 소고기가 푸짐하게 들어있고, 칼칼하면서도 시원한 국물 맛이 일품이다.", hours: "06:00 - 15:00", address: "서귀포시 성산읍 고성리 1146-2", lat: 33.4475, lng: 126.9145, icon: '☀️'},
             { id: 36, name: "우진해장국", category: "한식/해장국", region: "북부", menu1: "고사리 육개장", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=우진해장국+고사리육개장", menu2: "몸국", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=우진해장국+몸국", review: "제주에서만 맛볼 수 있는 독특한 비주얼의 고사리 육개장이 대표 메뉴. 걸쭉하고 깊은 맛이 난다.", hours: "06:00 - 22:00", address: "제주시 서사로 11", lat: 33.5118, lng: 126.5193, icon: '🍵'},
             { id: 37, name: "위이", category: "카페/디저트", region: "남부", menu1: "프렌치 토스트", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=위이+프렌치토스트", menu2: "제주 돌문어구이", price2: "24,000원", photo2: "https://search.naver.com/search.naver?where=image&query=위이+돌문어구이", review: "산방산과 바다가 보이는 탁 트인 전망의 브런치 카페. 분위기도 좋고 커피와 디저트 맛도 훌륭하다.", hours: "10:00 - 19:00 (시간대별 메뉴 상이)", address: "제주특별자치도 서귀포시 안덕면 신화역사로 682번길 12", lat: 33.2980, lng: 126.3200, icon: '☕'}
         ];
 
+        const travelData = {
+            1: [
+                { time: '10:00', place: '제주국제공항', activity: '도착', lat: 33.5104, lng: 126.4913, icon: '✈️' },
+                { time: '11:00', place: '명랑스낵', activity: '한치 튀김, 떡볶이', lat: 33.4150, lng: 126.2625, icon: '🍜' },
+                { time: '12:30', place: '풀베개', activity: '커피', lat: 33.2533, lng: 126.4837, icon: '☕' },
+                { time: '14:00', place: '제주부영호텔&리조트', activity: '체크인', lat: 33.2458, lng: 126.4087, icon: '🏨' },
+                { time: '15:00', place: '번네식당', activity: '갈치조림 식사', lat: 33.2514, lng: 126.5658, icon: '🍲' },
+                { time: '16:30', place: '제주부영호텔&리조트', activity: '휴식', lat: 33.2458, lng: 126.4087, icon: '🛌' },
+                { time: '18:30', place: '칠돈가 중문점', activity: '흑돼지 구이 식사', lat: 33.2505, lng: 126.4170, icon: '🍖' },
+                { time: '20:00', place: '제주부영호텔&리조트', activity: '휴식', lat: 33.2458, lng: 126.4087, icon: '🌙' }
+            ],
+            2: [
+                { time: '09:00', place: '제주선채향', activity: '전복칼국수 식사', lat: 33.2351, lng: 126.3115, icon: '🍜' },
+                { time: '10:30', place: '위이', activity: '커피', lat: 33.2980, lng: 126.3200, icon: '☕' },
+                { time: '12:00', place: '오는정 김밥', activity: '김밥 포장', lat: 33.2500, lng: 126.5630, icon: '🍙' },
+                { time: '14:00', place: '아쿠아뷰티크', activity: '체크인', lat: 33.5435, lng: 126.6668, icon: '🏨' },
+                { time: '17:00', place: '숙성도 함덕점', activity: '흑돼지 구이 식사', lat: 33.5430, lng: 126.6675, icon: '🍖' },
+                { time: '19:00', place: '미영이네 조천점', activity: '고등어 회 포장', lat: 33.5323, lng: 126.6908, icon: '🍣' },
+                { time: '20:00', place: '아쿠아뷰티크', activity: '휴식', lat: 33.5435, lng: 126.6668, icon: '🌙' }
+            ]
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            const appState = { currentView: 'explore', filters: { category: 'all' } };
+            // ... 기존 로직 ...
+            const appState = { currentView: 'explore', filters: { category: 'all' }, currentTravelDay: 1 };
             const views = {
                 explore: document.getElementById('explore-view'),
                 compare: document.getElementById('compare-view'),
                 map: document.getElementById('map-view'),
+                timeline: document.getElementById('timeline-view'),
                 insights: document.getElementById('insights-view')
             };
             const grid = document.getElementById('spot-grid'), noResults = document.getElementById('no-results');
             const modal = document.getElementById('modal'), modalTitle = document.getElementById('modal-title'), modalBody = document.getElementById('modal-body');
 
-            let mapInstance = null;
-            let mapMarkers = [];
+            let restaurantMap = null, timelineMap = null;
+            let restaurantMarkers = [], timelineMarkers = [], timelinePolyline = null;
 
-            const renderCards = () => {
+            const renderCards = () => { /* ... 기존과 동일 ... */ 
                 grid.innerHTML = '';
                 const filteredData = restaurantData.filter(d => appState.filters.category === 'all' || d.category === appState.filters.category);
                 noResults.classList.toggle('hidden', filteredData.length > 0);
@@ -266,7 +300,7 @@
                             <button class="w-full bg-[#B08968] text-white py-2 rounded-lg hover:bg-[#9C6644] transition-colors image-view-btn">실제 리뷰 사진 보기</button>
                         </div>
                         `;
-                    card.querySelector('.p-4').addEventListener('click', () => openModal(d.id));
+                    card.querySelector('.p-4').addEventListener('click', () => openModal(d.id, 'restaurant'));
                     card.querySelector('.image-view-btn').addEventListener('click', (e) => {
                         e.stopPropagation();
                         window.open(d.photo1, '_blank');
@@ -275,34 +309,25 @@
                 });
             };
 
-            const openModal = (id) => {
-                const spot = restaurantData.find(d => d.id == id);
-                modalTitle.innerHTML = `${spot.icon} ${spot.name}`;
-                modalBody.innerHTML = `
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="bg-amber-50 p-4 rounded-lg">
-                            <p class="font-semibold text-amber-800">대표 메뉴 1: ${spot.menu1}</p>
-                            <p class="text-sm text-gray-600">가격: ${spot.price1}</p>
-                            <a href="${spot.photo1}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a>
+            const openModal = (id, type) => {
+                const spot = type === 'restaurant' ? restaurantData.find(d => d.id == id) : null;
+                if (spot) {
+                    modalTitle.innerHTML = `${spot.icon} ${spot.name}`;
+                    modalBody.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-amber-50 p-4 rounded-lg"> <p class="font-semibold text-amber-800">대표 메뉴 1: ${spot.menu1}</p> <p class="text-sm text-gray-600">가격: ${spot.price1}</p> <a href="${spot.photo1}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a> </div>
+                            <div class="bg-red-50 p-4 rounded-lg"> <p class="font-semibold text-red-800">대표 메뉴 2: ${spot.menu2}</p> <p class="text-sm text-gray-600">가격: ${spot.price2}</p> <a href="${spot.photo2}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a> </div>
+                            <div class="bg-blue-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-blue-800">위치:</span> ${spot.address}</div>
+                            <div class="bg-green-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-green-800">영업 시간:</span> ${spot.hours}</div>
                         </div>
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <p class="font-semibold text-red-800">대표 메뉴 2: ${spot.menu2}</p>
-                            <p class="text-sm text-gray-600">가격: ${spot.price2}</p>
-                            <a href="${spot.photo2}" target="_blank" class="mt-2 inline-block text-sm text-blue-600 hover:underline">리뷰 사진 보기 &rarr;</a>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-blue-800">위치:</span> ${spot.address}</div>
-                        <div class="bg-green-50 p-4 rounded-lg col-span-1 sm:col-span-2"><span class="font-semibold text-green-800">영업 시간:</span> ${spot.hours}</div>
-                    </div>
-                    <div class="mt-4 bg-gray-50 p-4 rounded-lg">
-                        <h4 class="font-bold text-lg text-gray-800 mb-2">❤️ 한줄평</h4>
-                        <p>"${spot.review}"</p>
-                    </div>`;
+                        <div class="mt-4 bg-gray-50 p-4 rounded-lg"> <h4 class="font-bold text-lg text-gray-800 mb-2">❤️ 한줄평</h4> <p>"${spot.review}"</p> </div>`;
+                }
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 modal.querySelector('.modal-content').classList.remove('scale-95');
             };
 
-            const closeModal = () => {
-                modal.classList.add('opacity-0');
+            const closeModal = () => { /* ... 기존과 동일 ... */ 
+                 modal.classList.add('opacity-0');
                 modal.querySelector('.modal-content').classList.add('scale-95');
                 setTimeout(() => modal.classList.add('pointer-events-none'), 300);
             };
@@ -312,13 +337,15 @@
                 Object.values(views).forEach(v => v.classList.add('hidden'));
                 views[viewName].classList.remove('hidden');
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === viewName));
+                
                 if (viewName === 'insights') renderCharts();
-                if (viewName === 'map' && !mapInstance) initKakaoMap();
+                if (viewName === 'map' && !restaurantMap) initRestaurantMap();
+                if (viewName === 'timeline' && !timelineMap) initTimelineView();
                 if (viewName === 'compare') renderCompareTables();
             };
 
-            const renderCompareTables = () => {
-                const container = document.getElementById('compare-tables');
+            const renderCompareTables = () => { /* ... 기존과 동일 ... */ 
+                 const container = document.getElementById('compare-tables');
                 container.innerHTML = '';
                 const categories = ['흑돼지', '해산물', '한식/해장국', '분식/기타', '카페/디저트'];
                 const headers = [ {key: 'name', label: '이름'}, {key: 'menu1', label: '대표 메뉴 1'}, {key: 'menu2', label: '대표 메뉴 2'}, {key: 'review', label: '한줄평'} ];
@@ -346,52 +373,159 @@
                     container.innerHTML += table;
                 });
             };
-            
-            const initKakaoMap = () => {
+
+            // 맛집 지도 초기화 및 마커 렌더링
+            const initRestaurantMap = () => {
                  kakao.maps.load(() => {
-                    const mapContainer = document.getElementById('kakao-map');
-                    const mapOption = {
-                        center: new kakao.maps.LatLng(33.3846, 126.5562), // 제주의 중심
-                        level: 10
-                    };
-                    mapInstance = new kakao.maps.Map(mapContainer, mapOption);
-                    renderMapMarkers();
-                });
-            };
-
-            const renderMapMarkers = () => {
-                mapMarkers.forEach(marker => marker.setMap(null));
-                mapMarkers = [];
-
-                restaurantData.forEach(spot => {
-                    if (!spot.lat || !spot.lng) return;
-
-                    const position = new kakao.maps.LatLng(spot.lat, spot.lng);
+                    const mapContainer = document.getElementById('restaurant-map-container');
+                    const mapOption = { center: new kakao.maps.LatLng(33.3846, 126.5562), level: 10 };
+                    restaurantMap = new kakao.maps.Map(mapContainer, mapOption);
                     
-                    const content = `
-                        <div class="custom-overlay">
-                           <span class="custom-overlay-icon">${spot.icon}</span>
-                           <div class="custom-overlay-label">${spot.name}</div>
-                        </div>`;
-
-                    const customOverlay = new kakao.maps.CustomOverlay({
-                        position: position,
-                        content: content,
-                        yAnchor: 1
+                    restaurantMarkers.forEach(marker => marker.setMap(null));
+                    restaurantMarkers = [];
+                    restaurantData.forEach(spot => {
+                        if (!spot.lat || !spot.lng) return;
+                        const content = `<div class="custom-overlay-restaurant"><span class="custom-overlay-icon">${spot.icon}</span><div class="custom-overlay-label">${spot.name}</div></div>`;
+                        const overlay = new kakao.maps.CustomOverlay({
+                            position: new kakao.maps.LatLng(spot.lat, spot.lng),
+                            content: content,
+                            yAnchor: 1
+                        });
+                        overlay.a.addEventListener('click', () => openModal(spot.id, 'restaurant'));
+                        restaurantMarkers.push(overlay);
                     });
-
-                    // 오버레이 클릭 이벤트 리스너 추가
-                    customOverlay.a.addEventListener('click', () => {
-                        openModal(spot.id);
-                    });
-
-                    mapMarkers.push(customOverlay);
+                    restaurantMarkers.forEach(marker => marker.setMap(restaurantMap));
                 });
-                mapMarkers.forEach(marker => marker.setMap(mapInstance));
+            };
+            
+            // --- 여행 경로(타임라인) 관련 함수들 ---
+            const initTimelineView = () => {
+                kakao.maps.load(() => {
+                    const mapContainer = document.getElementById('timeline-map-container');
+                    const mapOption = { center: new kakao.maps.LatLng(33.3846, 126.5562), level: 10 };
+                    timelineMap = new kakao.maps.Map(mapContainer, mapOption);
+
+                    document.getElementById('timeline-day-selector').addEventListener('click', (e) => {
+                        const btn = e.target.closest('.day-btn');
+                        if (btn) {
+                            appState.currentTravelDay = parseInt(btn.dataset.day);
+                            document.querySelectorAll('#timeline-day-selector .day-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            renderTimelineAndRoute(appState.currentTravelDay);
+                        }
+                    });
+                    renderTimelineAndRoute(appState.currentTravelDay);
+                });
             };
 
+            const renderTimelineAndRoute = (day) => {
+                const dayData = travelData[day];
+                const listContainer = document.getElementById('timeline-list-container');
+                listContainer.innerHTML = '';
+                
+                // 이전 마커 및 폴리라인 제거
+                timelineMarkers.forEach(marker => marker.setMap(null));
+                timelineMarkers = [];
+                if(timelinePolyline) timelinePolyline.setMap(null);
+
+                const listHtml = `<div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>` +
+                    dayData.map((item, index) => `
+                    <div class="timeline-item-container relative mb-4" data-index="${index}">
+                        <div class="absolute left-4 top-6 w-4 h-4 bg-white border-4 border-[#B08968] rounded-full" style="transform: translate(-50%, -50%);"></div>
+                        <div class="timeline-content ml-12 p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
+                            <div class="timeline-item cursor-pointer">
+                                <span class="text-sm font-bold text-[#9C6644]">${item.time}</span>
+                                <h3 class="font-semibold text-lg text-gray-800">${index + 1}. ${item.place}</h3>
+                                <p class="text-gray-600">${item.icon} ${item.activity}</p>
+                            </div>
+                            <div class="mt-3 pt-3 border-t">
+                                <button class="gemini-suggest-btn w-full text-left text-sm font-semibold text-[#9C6644] hover:text-[#7F5539]" data-place="${item.place}">주변 추천받기 ✨</button>
+                            </div>
+                        </div>
+                    </div>`).join('');
+                listContainer.innerHTML = listHtml;
+                
+                const bounds = new kakao.maps.LatLngBounds();
+                const linePath = [];
+
+                dayData.forEach((item, index) => {
+                    const position = new kakao.maps.LatLng(item.lat, item.lng);
+                    linePath.push(position);
+                    bounds.extend(position);
+
+                    const content = `<div class="custom-overlay-path">${index + 1}</div>`;
+                    const overlay = new kakao.maps.CustomOverlay({
+                        position: position,
+                        content: content
+                    });
+                    overlay.setMap(timelineMap);
+                    timelineMarkers.push(overlay);
+                });
+
+                timelinePolyline = new kakao.maps.Polyline({
+                    path: linePath,
+                    strokeWeight: 4,
+                    strokeColor: '#7F5539',
+                    strokeOpacity: 0.8,
+                    strokeStyle: 'solid'
+                });
+                timelinePolyline.setMap(timelineMap);
+                timelineMap.setBounds(bounds);
+
+                // 타임라인 아이템 클릭 이벤트
+                listContainer.querySelectorAll('.timeline-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const container = e.currentTarget.closest('.timeline-item-container');
+                        const index = parseInt(container.dataset.index);
+                        const pos = new kakao.maps.LatLng(dayData[index].lat, dayData[index].lng);
+                        timelineMap.panTo(pos);
+                        
+                        document.querySelectorAll('.timeline-item-container').forEach(c => c.classList.remove('active'));
+                        container.classList.add('active');
+                    });
+                });
+
+                // Gemini 버튼 클릭 이벤트
+                listContainer.querySelectorAll('.gemini-suggest-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                         getGeminiSuggestions(e.target.dataset.place);
+                    });
+                });
+            };
+            
+            async function getGeminiSuggestions(placeName) {
+                if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY" || !GEMINI_API_KEY) {
+                    alert("Gemini API 키를 입력해주세요.");
+                    return;
+                }
+                modalTitle.innerHTML = `✨ ${placeName} 주변 추천`;
+                modalBody.innerHTML = '<div class="loader"></div>';
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.querySelector('.modal-content').classList.remove('scale-95');
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const prompt = `'${placeName}, 제주도' 근처의 현지인들이 좋아할 만한 숨겨진 맛집, 독특한 카페, 또는 가볼 만한 장소 3곳을 추천해 줘. 각 장소에 대한 설명은 한두 문장으로 간결하게 해주고, 추천 이유를 꼭 포함해줘.`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    if (!response.ok) throw new Error(`API 요청 실패: ${response.status}`);
+                    const result = await response.json();
+                    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    modalBody.innerHTML = text ? text.replace(/\n/g, '<br>') : "추천 정보를 받아오지 못했습니다.";
+                } catch (error) {
+                    console.error("Gemini API 호출 중 오류 발생:", error);
+                    modalBody.innerHTML = '<p class="text-red-500">추천 정보를 불러오는 데 실패했습니다.</p>';
+                }
+            }
+
+
+            // --- 차트 및 초기화 로직 ---
             let categoryChartInstance, regionChartInstance;
-            const renderCharts = () => {
+            const renderCharts = () => { /* ... 기존과 동일 ... */ 
                 const categoryCounts = restaurantData.reduce((acc, r) => { acc[r.category] = (acc[r.category] || 0) + 1; return acc; }, {});
                 const regionCounts = restaurantData.reduce((acc, r) => { acc[r.region] = (acc[r.region] || 0) + 1; return acc; }, {});
 
@@ -417,6 +551,7 @@
                 });
             };
 
+            // 전역 이벤트 리스너 설정
             document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
             document.querySelectorAll('.filter-btn.category-btn').forEach(btn => btn.addEventListener('click', () => {
                 document.querySelector('.filter-btn.category-btn.active').classList.remove('active');
@@ -427,6 +562,7 @@
             document.getElementById('modal-close-btn').addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => e.target === modal && closeModal());
 
+            // 초기 뷰 렌더링
             renderCards();
         });
     </script>
