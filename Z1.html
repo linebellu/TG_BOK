@@ -62,7 +62,6 @@
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="compare">카테고리별 비교</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="map">맛집 지도</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="timeline">여행 경로</button>
-            <!-- [추가] 상세 여행 보고서 탭 -->
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="report">상세 여행 보고서</button>
             <button class="nav-item py-4 px-2 md:px-4 text-sm md:text-base font-medium text-gray-500" data-view="insights">우리의 맛집 취향</button>
         </nav>
@@ -122,7 +121,6 @@
                 </div>
             </section>
             
-            <!-- [신규] 상세 여행 보고서 View -->
             <section id="report-view" class="hidden">
                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg space-y-12">
                     <div>
@@ -227,7 +225,7 @@
         // [중요] API 키 입력: Gemini API 키
         const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY";
 
-        // --- 데이터 영역 (모든 정보 최종 수정) ---
+        // --- 데이터 영역 (위치/정보 최종 수정본) ---
         const restaurantData = [
             { id: 1, name: "아라찐빵", category: "분식/기타", region: "북부", menu1: "찐빵", price1: "1,000원", photo1: "https://search.naver.com/search.naver?where=image&query=아라찐빵+찐빵", menu2: "꽈배기", price2: "1,000원", photo2: "https://search.naver.com/search.naver?where=image&query=아라찐빵+꽈배기", review: "제주 현지인들이 인정하는 숨은 맛집. 팥소가 너무 달지 않고 피가 쫀득쫀득해서 남녀노소 모두 좋아한다.", hours: "09:00 - 18:00 (일요일 휴무)", address: "제주시 인다1길 12", lat: 33.4896, lng: 126.5412, icon: '🥟'},{ id: 2, name: "오는정김밥", category: "분식/기타", region: "남부", menu1: "오는정김밥", price1: "4,000원", photo1: "https://search.naver.com/search.naver?where=image&query=오는정김밥", menu2: "참치김밥", price2: "6,000원", photo2: "https://search.naver.com/search.naver?where=image&query=오는정김밥+참치김밥", review: "전국구 명성의 김밥. 바삭하게 튀긴 유부가 들어가 독특한 식감과 고소한 맛을 낸다. 전화 예약 필수.", hours: "10:00 - 20:00 (일요일 휴무)", address: "서귀포시 동문동로 2", lat: 33.2500, lng: 126.5630, icon: '🍙'},{ id: 3, name: "풀베개", category: "카페/디저트", region: "남부", menu1: "스윗풀베개", price1: "7,000원", photo1: "https://search.naver.com/search.naver?where=image&query=풀베개+스윗풀베개", menu2: "당근케이크", price2: "7,500원", photo2: "https://search.naver.com/search.naver?where=image&query=풀베개+당근케이크", review: "조용한 주택가에 위치한 디저트 카페. 꾸덕하고 진한 크림치즈와 시나몬 향이 매력적인 당근 케이크가 가장 유명하다.", hours: "11:00 - 19:00 (수요일 휴무)", address: "서귀포시 일주서로595번길 20-3", lat: 33.2533, lng: 126.4837, icon: '🍰'},{ id: 5, name: "명랑스낵", category: "분식/기타", region: "서부", menu1: "짜장떡볶이", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=명랑스낵+짜장떡볶이", menu2: "한치튀김", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=명랑스낵+한치튀김", review: "협재해변 바로 앞에 위치한 분식집. 매콤달콤한 짜장떡볶이와 바삭한 튀김 조합이 훌륭하다.", hours: "11:30 - 19:30 (수요일 휴무)", address: "제주시 한림읍 한림로 1480", lat: 33.3938, lng: 126.2625, icon: '🍤'},{ id: 10, name: "제주시새우리", category: "분식/기타", region: "북부", menu1: "딱새우김밥", price1: "7,500원", photo1: "https://search.naver.com/search.naver?where=image&query=제주시새우리+딱새우김밥", menu2: "간장새우김밥", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=제주시새우리+간장새우김밥", review: "공항 근처에 위치해 포장하기 좋은 김밥 맛집. 바삭하게 튀긴 딱새우 패티가 통으로 들어가 식감과 맛이 훌륭하다.", hours: "09:00 - 20:30", address: "제주시 무근성7길 24", lat: 33.5152, lng: 126.5204, icon: '🦐'},{ id: 4, name: "점점", category: "해산물", region: "서부", menu1: "통돌문어 해물라면", price1: "18,000원", photo1: "https://search.naver.com/search.naver?where=image&query=점점+통돌문어+해물라면", menu2: "흑돼지 왕돈까스", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=점점+흑돼지+왕돈까스", review: "돌문어 한 마리가 통째로 들어간 압도적인 비주얼의 해물라면이 시그니처 메뉴. 판포포구 뷰도 훌륭하다.", hours: "09:00 - 18:00 (화요일 휴무)", address: "제주시 한경면 판포1길 2", lat: 33.3646, lng: 126.2104, icon: '🐙'},{ id: 6, name: "상상 함덕점", category: "해산물", region: "북부", menu1: "통문어 해물라면", price1: "18,000원", photo1: "https://search.naver.com/search.naver?where=image&query=상상+함덕점+통문어라면", menu2: "전복 해물라면", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=상상+함덕점+전복라면", review: "함덕해수욕장 바로 앞 오션뷰 맛집. 문어와 각종 해산물이 푸짐하게 들어가 국물이 시원하다.", hours: "08:30 - 21:00", address: "제주시 조천읍 조함해안로 525", lat: 33.5435, lng: 126.6668, icon: '🦀'},{ id: 7, name: "미영이네 조천점", category: "해산물", region: "북부", menu1: "고등어회+탕 (중)", price1: "70,000원", photo1: "https://search.naver.com/search.naver?where=image&query=미영이네+조천점+고등어회", menu2: "고등어구이", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=미영이네+조천점+고등어구이", review: "모슬포 본점의 명성을 그대로! 비린 맛 없이 극강의 신선함과 고소함을 자랑하는 고등어회가 일품.", hours: "16:00 - 22:00", address: "제주시 조천읍 함와로 510", lat: 33.5323, lng: 126.6908, icon: '🐠'},{ id: 8, name: "만선바다", category: "해산물", region: "동부", menu1: "통갈치조림 (2인)", price1: "80,000원", photo1: "https://search.naver.com/search.naver?where=image&query=만선바다+통갈치조림", menu2: "해물 전골 (중)", price2: "70,000원", photo2: "https://search.naver.com/search.naver?where=image&query=만선바다+해물전골", review: "성산일출봉 근처 해산물 전문점. 기다란 통갈치와 해산물이 푸짐하게 들어간 조림이 대표 메뉴.", hours: "10:00 - 22:00", address: "서귀포시 성산읍 일출로 250", lat: 33.4593, lng: 126.9360, icon: '🥘'},{ id: 9, name: "스시마씸 월정", category: "해산물", region: "동부", menu1: "제주바다스시", price1: "25,000원", photo1: "https://search.naver.com/search.naver?where=image&query=스시마씸+월정+제주바다스시", menu2: "커플세트", price2: "59,000원", photo2: "https://search.naver.com/search.naver?where=image&query=스시마씸+월정+커플세트", review: "월정리 해변가에 위치한 오션뷰 스시집. 제주산 활어와 딱새우 등을 활용한 특색 있는 초밥을 맛볼 수 있다.", hours: "11:30 - 21:00 (화요일 휴무)", address: "제주시 구좌읍 월정1길 72-1", lat: 33.5557, lng: 126.7915, icon: '🍣'},{ id: 11, name: "소금바치 순이네", category: "해산물", region: "동부", menu1: "돌문어볶음 (2인)", price1: "36,000원", photo1: "https://search.naver.com/search.naver?where=image&query=소금바치+순이네+돌문어볶음", menu2: "전복 해물뚝배기", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=소금바치+순이네+해물뚝배기", review: "매콤달콤한 양념의 돌문어볶음이 매우 중독적인 맛집. 남은 양념에 볶음밥 비벼먹는 것은 필수 코스.", hours: "11:00 - 21:00 (목요일 휴무)", address: "제주시 구좌읍 종달로 100", lat: 33.5074, lng: 126.9135, icon: '🌶️'},{ id: 12, name: "곰만식당", category: "해산물", region: "남부", menu1: "갈치조림 (중)", price1: "45,000원", photo1: "https://search.naver.com/search.naver?where=image&query=곰만식당+갈치조림", menu2: "성게미역국", price2: "12,000원", photo2: "https://search.naver.com/search.naver?where=image&query=곰만식당+성게미역국", review: "서귀포 현지인들이 추천하는 갈치조림 맛집. 합리적인 가격에 두툼하고 부드러운 갈치조림을 맛볼 수 있다.", hours: "08:00 - 21:00", address: "서귀포시 중정로 53", lat: 33.2483, lng: 126.5626, icon: '🍲'},{ id: 13, name: "김녕오라이", category: "해산물", region: "동부", menu1: "핑크뮬리 크림우동", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=김녕오라이+핑크뮬리+크림우동", menu2: "흑돼지 바질 리조또", price2: "16,000원", photo2: "https://search.naver.com/search.naver?where=image&query=김녕오라이+흑돼지+바질+리조또", review: "김녕해수욕장 근처의 퓨전 레스토랑. 명란과 비트로 색을 낸 핑크 크림 우동의 비주얼이 독특하고 예쁘다.", hours: "11:00 - 21:00 (수요일 휴무)", address: "제주시 구좌읍 김녕로21길 23", lat: 33.5592, lng: 126.7571, icon: '🍝'},{ id: 14, name: "명진전복", category: "해산물", region: "동부", menu1: "전복 돌솥밥", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=명진전복+전복돌솥밥", menu2: "전복 구이", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=명진전복+전복구이", review: "제주 전복 요리의 대명사. 전복 내장을 넣어 지은 고소한 밥과 쫄깃한 전복의 조화가 일품이다.", hours: "09:30 - 21:30 (화요일 휴무)", address: "제주시 구좌읍 해맞이해안로 1282", lat: 33.5350, lng: 126.8373, icon: '🍚'},{ id: 15, name: "금자매식당", category: "해산물", region: "동부", menu1: "갈치조림 정식(2인)", price1: "35,000원", photo1: "https://search.naver.com/search.naver?where=image&query=금자매식당+갈치조림", menu2: "전복 뚝배기", price2: "15,000원", photo2: "https://search.naver.com/search.naver?where=image&query=금자매식당+전복뚝배기", review: "성산일출봉 근처 가성비 좋은 아침식사 맛집. 정갈하고 맛있는 밑반찬과 함께 푸짐한 식사를 할 수 있다.", hours: "07:00 - 21:00", address: "서귀포시 성산읍 성산중앙로 40", lat: 33.4533, lng: 126.9152, icon: '🍳'},{ id: 16, name: "순천미향 제주산방산본점", category: "해산물", region: "남부", menu1: "통갈치조림 (2인)", price1: "79,000원", photo1: "https://search.naver.com/search.naver?where=image&query=순천미향+산방산+통갈치조림", menu2: "흑돼지 김치찜(2인)", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=순천미향+산방산+김치찜", review: "산방산이 보이는 뷰 맛집. 기다란 통갈치조림이 비주얼과 맛을 모두 잡았다. 다양한 밑반찬이 함께 제공된다.", hours: "10:00 - 20:30", address: "서귀포시 안덕면 사계남로 224", lat: 33.2384, lng: 126.3113, icon: '⛰️'},{ id: 17, name: "미영이네", category: "해산물", region: "남부", menu1: "고등어회 (중)", price1: "70,000원", photo1: "https://search.naver.com/search.naver?where=image&query=모슬포+미영이네+고등어회", menu2: "특방어회 (계절)", price2: "싯가", photo2: "https://search.naver.com/search.naver?where=image&query=모슬포+미영이네+방어회", review: "제주 고등어회의 성지로 불리는 모슬포항의 본점. 비린 맛 없이 신선하고 기름진 고등어회를 맛볼 수 있다.", hours: "11:30 - 22:00", address: "서귀포시 대정읍 하모항구로 42", lat: 33.2206, lng: 126.2515, icon: '✨'},{ id: 18, name: "번네식당", category: "해산물", region: "남부", menu1: "갈치조림 (소)", price1: "40,000원", photo1: "https://search.naver.com/search.naver?where=image&query=번네식당+갈치조림", menu2: "옥돔구이", price2: "30,000원", photo2: "https://search.naver.com/search.naver?where=image&query=번네식당+옥돔구이", review: "서귀포 올레시장 근처에 위치한 현지인 맛집. 진하고 칼칼한 국물의 갈치조림이 일품이다.", hours: "09:00 - 21:00", address: "서귀포시 중앙로79번길 5", lat: 33.2514, lng: 126.5658, icon: '🔥'},{ id: 19, name: "조천수산", category: "해산물", region: "북부", menu1: "모듬회 포장 (소)", price1: "30,000원", photo1: "https://search.naver.com/search.naver?where=image&query=조천수산+모듬회", menu2: "고등어회 포장", price2: "25,000원", photo2: "https://search.naver.com/search.naver?where=image&query=조천수산+고등어회", review: "압도적인 가성비를 자랑하는 포장 전문 횟집. 저렴한 가격에 신선하고 두툼한 회를 푸짐하게 즐길 수 있다.", hours: "10:00 - 20:00", address: "제주시 조천읍 신북로 231", lat: 33.5413, lng: 126.6575, icon: '🎏'},{ id: 20, name: "제주선채향", category: "해산물", region: "남부", menu1: "전복칼국수", price1: "11,000원", photo1: "https://search.naver.com/search.naver?where=image&query=제주선채향+전복칼국수", menu2: "전복죽", price2: "17,000원", photo2: "https://search.naver.com/search.naver?where=image&query=제주선채향+전복죽", review: "진한 전복 내장으로 국물을 내어 깊고 고소한 맛이 일품인 칼국수와 죽 전문점.", hours: "09:00 - 20:00", address: "서귀포시 안덕면 사계남로84번길 6", lat: 33.2351, lng: 126.3115, icon: '🌊'},{ id: 21, name: "송당회관", category: "흑돼지", region: "동부", menu1: "흑돼지 두루치기", price1: "10,000원 (1인)", photo1: "https://search.naver.com/search.naver?where=image&query=송당회관+흑돼지두루치기", menu2: "볶음밥", price2: "2,000원", photo2: "https://search.naver.com/search.naver?where=image&query=송당회관+볶음밥", review: "제주 동쪽 중산간에 위치한 가성비 맛집. 저렴한 가격에 푸짐한 흑돼지 두루치기를 맛볼 수 있다.", hours: "10:00 - 20:00", address: "제주시 구좌읍 중산간동로 2253", lat: 33.4800, lng: 126.7925, icon: '🐷'},{ id: 22, name: "깡촌흑돼지 함덕본점", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "63,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=깡촌흑돼지+함덕", menu2: "김치찌개", price2: "7,000원", photo2: "https://search.naver.com/search.naver?where=image&query=깡촌흑돼지+김치찌개", review: "초벌구이를 해서 나와 육즙이 가득한 흑돼지를 맛볼 수 있다. 직원들이 직접 구워주어 편하게 식사할 수 있다.", hours: "12:00 - 22:00", address: "제주시 조천읍 신북로 493", lat: 33.5417, lng: 126.6690, icon: '🐖'},{ id: 23, name: "탑부평 본점", category: "흑돼지", region: "남부", menu1: "흑돼지 생오겹살", price1: "20,000원 (200g)", photo1: "https://search.naver.com/search.naver?where=image&query=탑부평+본점+흑돼지", menu2: "된장찌개", price2: "2,000원", photo2: "https://search.naver.com/search.naver?where=image&query=탑부평+된장찌개", review: "서귀포 현지인들이 많이 찾는 흑돼지 맛집. 두툼하고 쫄깃한 오겹살의 퀄리티가 매우 높다.", hours: "16:00 - 22:00", address: "서귀포시 부두로 21", lat: 33.2450, lng: 126.5668, icon: '🖤'},{ id: 24, name: "직구고", category: "흑돼지", region: "북부", menu1: "흑돼지 직구세트", price1: "68,000원 (2인)", photo1: "https://search.naver.com/search.naver?where=image&query=직구고+흑돼지", menu2: "딱새우 된장찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=직구고+딱새우된장찌개", review: "직원들이 처음부터 끝까지 고기를 직접 구워주는 프리미엄 흑돼지 전문점. 최상의 굽기로 구워진 고기는 육즙이 풍부하다.", hours: "16:00 - 23:00", address: "제주시 연동12길 11", lat: 33.4880, lng: 126.4950, icon: '👨‍🍳'},{ id: 25, name: "금돗 성산흑돼지", category: "흑돼지", region: "동부", menu1: "흑돼지 근고기", price1: "66,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=금돗+성산흑돼지", menu2: "김치찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=금돗+성산흑돼지+김치찌개", review: "성산일출봉 근처에 위치해 뷰가 좋은 흑돼지 맛집. 창가 자리에서는 성산일출봉을 보며 식사할 수 있다.", hours: "12:00 - 22:00", address: "서귀포시 성산읍 일출로 266", lat: 33.4613, lng: 126.9372, icon: '🌅'},{ id: 26, name: "오직흑돼지 제주공항본점", category: "흑돼지", region: "북부", menu1: "흑돼지 오겹살", price1: "19,000원 (180g)", photo1: "https://search.naver.com/search.naver?where=image&query=오직흑돼지+공항본점", menu2: "흑돼지 김치찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=오직흑돼지+김치찌개", review: "공항과 가까워 여행의 시작이나 마지막 식사 장소로 좋다. 매장이 깔끔하고, 고기 맛도 준수하다.", hours: "11:30 - 22:00", address: "제주시 월랑로 56", lat: 33.4988, lng: 126.4780, icon: '✈️'},{ id: 27, name: "꽃돼지연탄구이", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "60,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=꽃돼지연탄구이", menu2: "흑돼지 김치찌개", price2: "7,000원", photo2: "https://search.naver.com/search.naver?where=image&query=꽃돼지연탄구이+김치찌개", review: "연탄불에 구워 은은한 불향이 매력적인 흑돼지 맛집. 노포 감성의 분위기에서 술 한잔하기 좋다.", hours: "16:00 - 24:00", address: "제주시 관덕로15길 25", lat: 33.5147, lng: 126.5222, icon: '🌸'},{ id: 28, name: "칠돈가 본점", category: "흑돼지", region: "북부", menu1: "흑돼지 근고기", price1: "66,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=칠돈가+본점", menu2: "김치찌개", price2: "8,000원", photo2: "https://search.naver.com/search.naver?where=image&query=칠돈가+김치찌개", review: "제주 흑돼지 근고기의 원조격으로 불리는 유명 맛집. 연탄불에 구워주는 두툼한 고기는 육즙이 살아있다.", hours: "13:00 - 22:30", address: "제주시 서사로 11", lat: 33.5097, lng: 126.5195, icon: '7️⃣'},{ id: 29, name: "칠돈가 중문점", category: "흑돼지", region: "남부", menu1: "흑돼지 근고기", price1: "66,000원 (600g)", photo1: "https://search.naver.com/search.naver?where=image&query=칠돈가+중문점", menu2: "동치미국수", price2: "6,000원", photo2: "https://search.naver.com/search.naver?where=image&query=칠돈가+동치미국수", review: "본점의 맛과 시스템을 중문에서도 즐길 수 있다. 중문관광단지와 가까워 관광객들의 접근성이 좋다.", hours: "12:00 - 22:00", address: "서귀포시 천제연로 137", lat: 33.2505, lng: 126.4170, icon: '💯'},{ id: 30, name: "숙성도 애월점", category: "흑돼지", region: "서부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720g)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+애월", menu2: "동치미 열무국수", price2: "6,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+열무국수", review: "제주 흑돼지 맛집의 신흥 강자. 독자적인 숙성 방식으로 극강의 부드러움과 풍미를 자랑한다. 테이블링 앱 원격 줄서기 필수.", hours: "12:00 - 22:00", address: "제주시 애월읍 애월북서길 54", lat: 33.4627, lng: 126.3195, icon: '👑'},{ id: 31, name: "숙성도 중문점", category: "흑돼지", region: "남부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720g)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+중문", menu2: "갈치속젓 볶음밥", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+갈치속젓볶음밥", review: "최고의 흑돼지를 중문에서 맛볼 수 있다. 고기 퀄리티와 서비스 모두 훌륭하며, 감칠맛 나는 갈치속젓 볶음밥으로 마무리하는 것이 인기.", hours: "12:00 - 22:00", address: "서귀포시 일주서로 966", lat: 33.2530, lng: 126.4255, icon: '🏆'},{ id: 32, name: "숙성도 제주본점", category: "흑돼지", region: "북부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720g)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+노형본점", menu2: "명란젓", price2: "4,000원", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+명란젓", review: "숙성도 신화의 시작점. 고사리, 백김치, 명란젓 등 다양한 곁들임과 함께 즐기는 숙성 흑돼지의 맛이 일품.", hours: "12:00 - 22:00", address: "제주시 원노형로 41", lat: 33.4855, lng: 126.4815, icon: '🥇'},{ id: 33, name: "숙성도 함덕점", category: "흑돼지", region: "북부", menu1: "교차숙성 흑돼지", price1: "59,000원 (720g)", photo1: "https://search.naver.com/search.naver?where=image&query=숙성도+함덕", menu2: "960숙성 뼈등심", price2: "28,000원 (1인)", photo2: "https://search.naver.com/search.naver?where=image&query=숙성도+뼈등심", review: "함덕해수욕장 바로 앞에 위치해 오션뷰를 즐기며 식사할 수 있다. 한정 판매하는 뼈등심 메뉴가 특별하다.", hours: "12:00 - 22:00", address: "제주시 조천읍 조함해안로 514", lat: 33.5430, lng: 126.6675, icon: '🌊'},{ id: 34, name: "모다정", category: "한식/해장국", region: "남부", menu1: "전복 두루치기(중)", price1: "45,000원", photo1: "https://search.naver.com/search.naver?where=image&query=모다정+전복두루치기", menu2: "전복 성게 돌솥밥", price2: "17,000원", photo2: "https://search.naver.com/search.naver?where=image&query=모다정+전복성게돌솥밥", review: "전복, 흑돼지, 딱새우, 오징어 등 다양한 재료가 들어간 두루치기가 대표 메뉴. 매콤달콤한 양념이 입맛을 돋운다.", hours: "09:00 - 21:00", address: "서귀포시 이어도로 1021", lat: 33.2597, lng: 126.4984, icon: '❤️'},{ id: 35, name: "산지해장국 성산점", category: "한식/해장국", region: "동부", menu1: "소고기 해장국", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=산지해장국+성산점", menu2: "내장탕", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=산지해장국+내장탕", review: "제주식 해장국의 정석. 선지와 소고기가 푸짐하게 들어있고, 칼칼하면서도 시원한 국물 맛이 일품이다.", hours: "06:00 - 15:00", address: "서귀포시 성산읍 고성리 1146-2", lat: 33.4475, lng: 126.9145, icon: '☀️'},{ id: 36, name: "우진해장국", category: "한식/해장국", region: "북부", menu1: "고사리 육개장", price1: "10,000원", photo1: "https://search.naver.com/search.naver?where=image&query=우진해장국+고사리육개장", menu2: "몸국", price2: "10,000원", photo2: "https://search.naver.com/search.naver?where=image&query=우진해장국+몸국", review: "제주에서만 맛볼 수 있는 독특한 비주얼의 고사리 육개장이 대표 메뉴. 걸쭉하고 깊은 맛이 난다.", hours: "06:00 - 22:00", address: "제주시 서사로 11", lat: 33.5118, lng: 126.5193, icon: '🍵'},{ id: 37, name: "위이", category: "카페/디저트", region: "남부", menu1: "프렌치 토스트", price1: "16,000원", photo1: "https://search.naver.com/search.naver?where=image&query=위이+프렌치토스트", menu2: "제주 돌문어구이", price2: "24,000원", photo2: "https://search.naver.com/search.naver?where=image&query=위이+돌문어구이", review: "산방산과 바다가 보이는 탁 트인 전망의 브런치 카페. 분위기도 좋고 커피와 디저트 맛도 훌륭하다.", hours: "10:00 - 19:00 (시간대별 메뉴 상이)", address: "제주특별자치도 서귀포시 안덕면 신화역사로 682번길 12", lat: 33.2980, lng: 126.3200, icon: '☕'}
         ];
@@ -255,7 +253,7 @@
             let restaurantMarkers = [], timelineMarkers = [], timelinePolyline = null;
             let categoryChartInstance, regionChartInstance;
             
-            const switchView = (viewName) => {
+            function switchView(viewName) {
                 appState.currentView = viewName;
                 Object.values(views).forEach(v => v.classList.add('hidden'));
                 views[viewName].classList.remove('hidden');
@@ -265,9 +263,9 @@
                 if (viewName === 'map' && !restaurantMap) initRestaurantMap();
                 if (viewName === 'timeline' && !timelineMap) initTimelineView();
                 if (viewName === 'compare') renderCompareTables();
-            };
+            }
 
-            const renderCards = () => {
+            function renderCards() {
                 grid.innerHTML = '';
                 const filteredData = restaurantData.filter(d => appState.filters.category === 'all' || d.category === appState.filters.category);
                 noResults.classList.toggle('hidden', filteredData.length > 0);
@@ -280,9 +278,9 @@
                     card.querySelector('.image-view-btn').addEventListener('click', (e) => { e.stopPropagation(); window.open(d.photo1, '_blank'); });
                     grid.appendChild(card);
                 });
-            };
+            }
 
-            const openModal = (id, type) => {
+            function openModal(id, type) {
                 const spot = type === 'restaurant' ? restaurantData.find(d => d.id == id) : null;
                 if (spot) {
                     modalTitle.innerHTML = `${spot.icon} ${spot.name}`;
@@ -290,14 +288,14 @@
                 }
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 modal.querySelector('.modal-content').classList.remove('scale-95');
-            };
-            const closeModal = () => {
+            }
+            function closeModal() {
                 modal.classList.add('opacity-0');
                 modal.querySelector('.modal-content').classList.add('scale-95');
                 setTimeout(() => modal.classList.add('pointer-events-none'), 300);
-            };
+            }
 
-            const renderCompareTables = () => {
+            function renderCompareTables() {
                 const container = document.getElementById('compare-tables'); container.innerHTML = '';
                 const categories = ['흑돼지', '해산물', '한식/해장국', '분식/기타', '카페/디저트'];
                 const headers = [ {key: 'name', label: '이름'}, {key: 'menu1', label: '대표 메뉴 1'}, {key: 'menu2', label: '대표 메뉴 2'}, {key: 'review', label: '한줄평'} ];
@@ -306,9 +304,9 @@
                     const table = `<h3 class="text-2xl font-bold mb-4 text-sky-500">${data.length > 0 ? data[0].icon : ''} ${cat} 비교</h3><div class="overflow-x-auto bg-white rounded-lg shadow"><table class="w-full text-sm text-left text-gray-500"><thead class="text-xs text-gray-700 uppercase bg-slate-50"><tr>${headers.map(h => `<th scope="col" class="px-6 py-3">${h.label}</th>`).join('')}</tr></thead><tbody>${data.map(d => `<tr class="bg-white border-b border-slate-200 hover:bg-slate-50"><td class="px-6 py-4 font-medium text-gray-900">${d.name}</td><td class="px-6 py-4">${d.menu1} (${d.price1})</td><td class="px-6 py-4">${d.menu2} (${d.price2})</td><td class="px-6 py-4 text-xs">"${d.review}"</td></tr>`).join('')}</tbody></table></div>`;
                     container.innerHTML += table;
                 });
-            };
+            }
             
-            const initRestaurantMap = () => {
+            function initRestaurantMap() {
                  kakao.maps.load(() => {
                     const mapContainer = document.getElementById('restaurant-map-container');
                     const mapOption = { center: new kakao.maps.LatLng(33.3846, 126.5562), level: 10 };
@@ -328,9 +326,9 @@
                     });
                     restaurantMarkers.forEach(marker => marker.setMap(restaurantMap));
                 });
-            };
+            }
             
-            const initTimelineView = () => {
+            function initTimelineView() {
                 kakao.maps.load(() => {
                     const mapContainer = document.getElementById('timeline-map-container');
                     const mapOption = { center: new kakao.maps.LatLng(33.3846, 126.5562), level: 10 };
@@ -340,4 +338,112 @@
                         const btn = e.target.closest('.day-btn');
                         if (btn) {
                             appState.currentTravelDay = parseInt(btn.dataset.day);
-              _BOK_ERROR_
+                            document.querySelectorAll('#timeline-day-selector .day-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            renderTimelineAndRoute(appState.currentTravelDay);
+                        }
+                    });
+                    
+                    document.getElementById('timeline-list-container').addEventListener('click', (e) => {
+                         const timelineItem = e.target.closest('.timeline-item');
+                         if(timelineItem) {
+                            const container = timelineItem.closest('.timeline-item-container');
+                            const index = parseInt(container.dataset.index);
+                            const dayData = travelData[appState.currentTravelDay];
+                            const pos = new kakao.maps.LatLng(dayData[index].lat, dayData[index].lng);
+                            timelineMap.panTo(pos);
+                            document.querySelectorAll('#timeline-list-container .timeline-item-container').forEach(c => c.classList.remove('active'));
+                            container.classList.add('active');
+                         }
+                         const geminiBtn = e.target.closest('.gemini-suggest-btn');
+                         if(geminiBtn) {
+                             getGeminiSuggestions(geminiBtn.dataset.place);
+                         }
+                    });
+
+                    renderTimelineAndRoute(appState.currentTravelDay);
+                });
+            }
+
+            function renderTimelineAndRoute(day) {
+                const dayData = travelData[day];
+                const listContainer = document.getElementById('timeline-list-container');
+                let listHtml = '<div class="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-200"></div>';
+
+                timelineMarkers.forEach(marker => marker.setMap(null));
+                timelineMarkers = [];
+                if(timelinePolyline) timelinePolyline.setMap(null);
+
+                dayData.forEach((item, index) => {
+                    listHtml += `<div class="timeline-item-container relative" data-index="${index}"><div class="absolute left-4 top-6 w-4 h-4 bg-white border-4 border-sky-400 rounded-full" style="transform: translate(-50%, -50%);"></div><div class="timeline-content ml-12 p-4 bg-white rounded-lg shadow-md border-2 border-transparent"><div class="timeline-item cursor-pointer"><span class="text-sm font-bold text-sky-500">${item.time}</span><h3 class="font-semibold text-lg text-gray-800">${index + 1}. ${item.place}</h3><p class="text-gray-600">${item.icon} ${item.activity}</p></div><div class="mt-3 pt-3 border-t border-slate-200"><button class="gemini-suggest-btn w-full text-left text-sm font-semibold text-sky-500 hover:text-sky-600" data-place="${item.place}">주변 추천받기 ✨</button></div></div></div>`;
+                    if (index < dayData.length - 1 && item.duration) {
+                        listHtml += `<div class="travel-time-info"><span>🚗 약 ${item.duration}분 이동</span></div>`;
+                    }
+                });
+                listContainer.innerHTML = listHtml;
+                
+                const bounds = new kakao.maps.LatLngBounds();
+                const linePath = [];
+
+                dayData.forEach((item, index) => {
+                    const position = new kakao.maps.LatLng(item.lat, item.lng);
+                    linePath.push(position);
+                    bounds.extend(position);
+                    const content = `<div class="custom-overlay-path"><span class="icon">${item.icon}</span><span class="number">${index + 1}</span><div class="label">${item.place}</div></div>`;
+                    const overlay = new kakao.maps.CustomOverlay({ position, content });
+                    overlay.a.addEventListener('click', () => {
+                        timelineMap.panTo(position);
+                        const targetContainer = listContainer.querySelector(`[data-index="${index}"]`);
+                        document.querySelectorAll('.timeline-item-container').forEach(c => c.classList.remove('active'));
+                        targetContainer.classList.add('active');
+                        targetContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                    overlay.setMap(timelineMap);
+                    timelineMarkers.push(overlay);
+                });
+
+                timelinePolyline = new kakao.maps.Polyline({ path: linePath, strokeWeight: 4, strokeColor: '#38bdf8', strokeOpacity: 0.8, strokeStyle: 'solid' });
+                timelinePolyline.setMap(timelineMap);
+                if(dayData.length > 0) timelineMap.setBounds(bounds);
+            }
+            
+            async function getGeminiSuggestions(placeName) {
+                if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY" || !GEMINI_API_KEY) { alert("Gemini API 키를 입력해주세요."); return; }
+                modalTitle.innerHTML = `✨ ${placeName} 주변 추천`; modalBody.innerHTML = '<div class="loader"></div>';
+                modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('.modal-content').classList.remove('scale-95');
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const prompt = `'${placeName}, 제주도' 근처의 현지인들이 좋아할 만한 숨겨진 맛집, 독특한 카페, 또는 가볼 만한 장소 3곳을 추천해 줘. 각 장소에 대한 설명은 한두 문장으로 간결하게 해주고, 추천 이유를 꼭 포함해줘.`;
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                    if (!response.ok) throw new Error(`API 요청 실패: ${response.status}`);
+                    const result = await response.json(); const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    modalBody.innerHTML = text ? text.replace(/\n/g, '<br>') : "추천 정보를 받아오지 못했습니다.";
+                } catch (error) { console.error("Gemini API 호출 중 오류 발생:", error); modalBody.innerHTML = '<p class="text-red-500">추천 정보를 불러오는 데 실패했습니다.</p>'; }
+            }
+
+            function renderCharts() {
+                const categoryCounts = restaurantData.reduce((acc, r) => { acc[r.category] = (acc[r.category] || 0) + 1; return acc; }, {});
+                const regionCounts = restaurantData.reduce((acc, r) => { acc[r.region] = (acc[r.region] || 0) + 1; return acc; }, {});
+                const chartColors = ['#38bdf8', '#7dd3fc', '#bae6fd', '#e0f2fe', '#0ea5e9'];
+                if (categoryChartInstance) categoryChartInstance.destroy();
+                categoryChartInstance = new Chart(document.getElementById('categoryChart'), { type: 'pie', data: { labels: Object.keys(categoryCounts), datasets: [{ data: Object.values(categoryCounts), backgroundColor: chartColors }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } } } });
+                if (regionChartInstance) regionChartInstance.destroy();
+                regionChartInstance = new Chart(document.getElementById('regionChart'), { type: 'bar', data: { labels: Object.keys(regionCounts), datasets: [{ label: '맛집 수', data: Object.values(regionCounts), backgroundColor: chartColors[0] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
+            }
+
+            document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
+            document.querySelectorAll('.filter-btn.category-btn').forEach(btn => btn.addEventListener('click', () => {
+                document.querySelector('.filter-btn.category-btn.active').classList.remove('active');
+                btn.classList.add('active');
+                appState.filters.category = btn.dataset.category;
+                renderCards();
+            }));
+            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => e.target === modal && closeModal());
+
+            renderCards();
+        });
+    </script>
+</body>
+</html>
+
