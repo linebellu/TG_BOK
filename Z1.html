@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>그녀를 위한 완벽한 제주 여행 가이드 (모바일 최적화 최종본)</title>
+    <title>그녀를 위한 완벽한 제주 여행 가이드 (기능 오류 최종 수정)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- [중요] YOUR_KAKAO_APP_KEY 부분에 발급받은 JavaScript 키를 입력하세요. -->
@@ -124,72 +124,13 @@
             </section>
             
             <section id="report-view" class="hidden">
-                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg space-y-12">
-                    <div>
-                        <h2 class="text-3xl font-bold text-sky-500 mb-2">Day 1: 남부의 맛과 황홀한 해안 절경</h2>
-                        <p class="text-gray-600">공항 도착 후 남쪽으로 이동하여 맛있는 점심을 먹고, 바로 근처의 환상적인 용머리해안을 산책합니다. 이후 중문 숙소에 체크인한 뒤, 서쪽 협재해변의 노을과 함께 간식을 즐기고 흑돼지로 완벽한 저녁을 마무리하는 코스입니다.</p>
-                        <div class="overflow-x-auto mt-6">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-slate-100 text-slate-600">
-                                    <tr><th class="p-4 rounded-l-lg">구분</th><th class="p-4">출발</th><th class="p-4">경로</th><th class="p-4">이동 시간</th><th class="p-4">도착</th><th class="p-4 rounded-r-lg">활동 내용</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">공항 도착</td><td class="p-4">-</td><td class="p-4">-</td><td class="p-4">-</td><td class="p-4 font-bold">10:30</td><td class="p-4">🛬 제주국제공항 도착 및 렌터카 수령</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">점심 식사</td><td class="p-4">11:00</td><td class="p-4">제주공항 → 번네식당</td><td class="p-4">약 1시간</td><td class="p-4 font-bold">12:00</td><td class="p-4">🍽️ **[번네식당]** 현지인 추천 맛집에서 칼칼한 갈치조림으로 점심</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">해안 산책</td><td class="p-4">13:30</td><td class="p-4">번네식당 → 용머리해안</td><td class="p-4">약 10분</td><td class="p-4 font-bold">13:40</td><td class="p-4">🚶‍♀️ **[용머리해안]** 웅장한 해안 절벽을 따라 산책하며 인생 사진 남기기</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">카페 타임</td><td class="p-4">15:00</td><td class="p-4">용머리해안 → 풀베개</td><td class="p-4">약 10분</td><td class="p-4 font-bold">15:10</td><td class="p-4">☕ **[풀베개]** 한적한 분위기에서 커피와 맛있는 케이크 즐기기</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">숙소 이동</td><td class="p-4">16:20</td><td class="p-4">풀베개 → 제주 부영 호텔</td><td class="p-4">약 25분</td><td class="p-4 font-bold">16:45</td><td class="p-4">🏨 **[제주 부영 호텔&리조트]** 체크인 및 충분한 휴식</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">오후 간식</td><td class="p-4">18:00</td><td class="p-4">제주 부영 호텔 → 명랑스낵</td><td class="p-4">약 40분</td><td class="p-4 font-bold">18:40</td><td class="p-4">🌅 **[명랑스낵 & 협재해변]** 아름다운 협재해변 노을을 보며 떡볶이와 튀김 먹기</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">저녁 식사</td><td class="p-4">19:40</td><td class="p-4">명랑스낵 → 칠돈가 중문점</td><td class="p-4">약 35분</td><td class="p-4 font-bold">20:15</td><td class="p-4">🍖 **[칠돈가 중문점]** 제주 여행의 필수 코스, 연탄불 흑돼지 근고기 맛보기</td></tr>
-                                    <tr class="bg-slate-50"><td class="p-4 font-semibold">숙소 복귀</td><td class="p-4">21:30</td><td class="p-4">칠돈가 중문점 → 제주 부영 호텔</td><td class="p-4">약 5분</td><td class="p-4 font-bold">21:35</td><td class="p-4">🌙 호텔 복귀 후 1일차 마무리</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg">
+                    <div id="report-day-selector" class="flex gap-2 mb-6 border-b border-slate-200">
+                        <button data-day="1" class="day-btn flex-1 !border-0 !shadow-none !rounded-b-none !bg-transparent text-gray-500 active" style="border-bottom-width: 2px;">Day 1</button>
+                        <button data-day="2" class="day-btn flex-1 !border-0 !shadow-none !rounded-b-none !bg-transparent text-gray-500" style="border-bottom-width: 2px;">Day 2</button>
+                        <button data-day="3" class="day-btn flex-1 !border-0 !shadow-none !rounded-b-none !bg-transparent text-gray-500" style="border-bottom-width: 2px;">Day 3</button>
                     </div>
-                    <div>
-                        <h2 class="text-3xl font-bold text-sky-500 mb-2">Day 2: 서귀포의 아침과 에메랄드빛 함덕</h2>
-                        <p class="text-gray-600">서귀포에서 아침을 시작하여, 제주 동쪽 해안을 따라 드라이브하며 중간에 아름다운 월정리해변에서 쉬어갑니다. 최종 목적지인 함덕해수욕장에서는 에메랄드빛 바다를 마음껏 즐기고, 숙소 근처 맛집에서 하루를 마무리합니다.</p>
-                         <div class="overflow-x-auto mt-6">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-slate-100 text-slate-600">
-                                    <tr><th class="p-4 rounded-l-lg">구분</th><th class="p-4">출발</th><th class="p-4">경로</th><th class="p-4">이동 시간</th><th class="p-4">도착</th><th class="p-4 rounded-r-lg">활동 내용</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">아침 식사</td><td class="p-4">10:00</td><td class="p-4">제주 부영 호텔 → 선채향</td><td class="p-4">약 25분</td><td class="p-4 font-bold">10:25</td><td class="p-4">🍜 **[선채향]** 진한 국물의 전복 칼국수와 전복죽으로 든든한 아침</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">김밥 픽업</td><td class="p-4">11:30</td><td class="p-4">선채향 → 오는정 김밥</td><td class="p-4">약 40분</td><td class="p-4 font-bold">12:10</td><td class="p-4">🍙 **[오는정 김밥]** 예약한 김밥 픽업 (간식 또는 다음 날 아침용)</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">해변 카페</td><td class="p-4">12:30</td><td class="p-4">오는정 김밥 → 월정리해변</td><td class="p-4">약 1시간</td><td class="p-4 font-bold">13:30</td><td class="p-4">🏖️ **[월정리해변]** 에메랄드빛 바다 앞 카페에서 잠시 휴식</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">숙소 이동</td><td class="p-4">15:00</td><td class="p-4">월정리해변 → 아쿠아 뷰티끄</td><td class="p-4">약 20분</td><td class="p-4 font-bold">15:20</td><td class="p-4">🏨 **[아쿠아 뷰티끄]** 함덕 숙소 체크인</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">해변 산책</td><td class="p-4">15:40</td><td class="p-4">숙소 → 함덕해수욕장</td><td class="p-4">도보 2분</td><td class="p-4 font-bold">15:42</td><td class="p-4">🌊 **[함덕해수욕장]** '한국의 몰디브'라 불리는 함덕 서우봉 해변 산책</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">저녁 식사</td><td class="p-4">18:00</td><td class="p-4">아쿠아 뷰티끄 → 숙성도 함덕점</td><td class="p-4">도보 5분</td><td class="p-4 font-bold">18:05</td><td class="p-4">🍖 **[숙성도 함덕점]** 최고의 숙성 흑돼지 맛집에서 즐기는 저녁 식사</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">야식 포장</td><td class="p-4">20:00</td><td class="p-4">숙성도 함덕점 → 미영이네 조천점</td><td class="p-4">약 15분</td><td class="p-4 font-bold">20:15</td><td class="p-4">🍣 **[미영이네 조천점]** 신선한 고등어회 포장</td></tr>
-                                    <tr class="bg-slate-50"><td class="p-4 font-semibold">숙소 복귀</td><td class="p-4">20:40</td><td class="p-4">미영이네 조천점 → 아쿠아 뷰티끄</td><td class="p-4">약 15분</td><td class="p-4 font-bold">20:55</td><td class="p-4">🌙 숙소에서 함덕의 밤바다를 보며 고등어회와 함께 2일차 마무리</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                     <div>
-                        <h2 class="text-3xl font-bold text-sky-500 mb-2">Day 3: 성산의 일출, 동문시장의 밤</h2>
-                        <p class="text-gray-600">성산일출봉의 장엄한 일출로 시작하여, 제주 동쪽 해안을 따라 드라이브합니다. 공항으로 가기 전, 동문시장의 활기찬 분위기와 이호테우해변의 로맨틱한 일몰을 감상하며 여행의 마지막을 장식합니다.</p>
-                         <div class="overflow-x-auto mt-6">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-slate-100 text-slate-600">
-                                    <tr><th class="p-4 rounded-l-lg">구분</th><th class="p-4">출발</th><th class="p-4">경로</th><th class="p-4">이동 시간</th><th class="p-4">도착</th><th class="p-4 rounded-r-lg">활동 내용</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">일출 감상</td><td class="p-4">05:20</td><td class="p-4">아쿠아 뷰티끄 → 성산일출봉</td><td class="p-4">약 50분</td><td class="p-4 font-bold">06:10</td><td class="p-4">🌅 **[성산일출봉]** 정상에 올라 일출 감상 (10월 일출 약 06:30)</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">아침 식사</td><td class="p-4">08:00</td><td class="p-4">성산일출봉 → 산지해장국</td><td class="p-4">약 5분</td><td class="p-4 font-bold">08:05</td><td class="p-4">☀️ **[산지해장국]** 뜨끈한 제주식 소고기 해장국으로 든든한 아침</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">동부 관광</td><td class="p-4">09:10</td><td class="p-4">산지해장국 → 섭지코지</td><td class="p-4">약 10분</td><td class="p-4 font-bold">09:20</td><td class="p-4">🏞️ **[섭지코지]** 아름다운 해안 절경 감상 및 산책</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">점심 식사</td><td class="p-4">12:00</td><td class="p-4">섭지코지 → 명진전복</td><td class="p-4">약 30분</td><td class="p-4 font-bold">12:30</td><td class="p-4">🍚 **[명진전복]** 고소한 전복 돌솥밥으로 점심 식사</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">해안도로</td><td class="p-4">14:00</td><td class="p-4">명진전복 → 김녕-월정 해안도로</td><td class="p-4">약 15분</td><td class="p-4 font-bold">14:15</td><td class="p-4">🚗 **[김녕-월정 해안도로]** 풍차와 에메랄드빛 바다를 보며 드라이브</td></tr>
-                                     <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">숙소 이동</td><td class="p-4">15:30</td><td class="p-4">해안도로 → 호텔 에어시티 제주</td><td class="p-4">약 40분</td><td class="p-4 font-bold">16:10</td><td class="p-4">🏨 **[호텔 에어시티 제주]** 공항 근처 숙소 체크인 및 휴식</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">일몰 감상</td><td class="p-4">17:30</td><td class="p-4">호텔 에어시티 → 이호테우해변</td><td class="p-4">약 15분</td><td class="p-4 font-bold">17:45</td><td class="p-4">🌇 **[이호테우해변]** 말 등대를 배경으로 로맨틱한 일몰 감상</td></tr>
-                                    <tr class="bg-slate-50 border-b border-slate-200"><td class="p-4 font-semibold">시장 구경</td><td class="p-4">18:30</td><td class="p-4">이호테우해변 → 동문시장</td><td class="p-4">약 20분</td><td class="p-4 font-bold">18:50</td><td class="p-4">🏮 **[동문시장]** 활기 넘치는 야시장을 구경하고 길거리 음식 맛보기</td></tr>
-                                    <tr class="border-b border-slate-200"><td class="p-4 font-semibold">저녁 식사</td><td class="p-4">20:00</td><td class="p-4">동문시장 → 꽃돼지연탄구이</td><td class="p-4">도보 5분</td><td class="p-4 font-bold">20:05</td><td class="p-4">🍖 **[꽃돼지연탄구이]** 연탄불 향 가득한 흑돼지로 여행의 마지막 저녁</td></tr>
-                                    <tr class="bg-slate-50"><td class="p-4 font-semibold">숙소 복귀</td><td class="p-4">21:30</td><td class="p-4">꽃돼지연탄구이 → 호텔 에어시티</td><td class="p-4">약 15분</td><td class="p-4 font-bold">21:45</td><td class="p-4">🌙 숙소 복귀 후 여행 마지막 밤 정리</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <div id="report-content-container"></div>
                 </div>
             </section>
 
@@ -301,6 +242,7 @@
                 if (viewName === 'map' && !restaurantMap) initRestaurantMap();
                 if (viewName === 'timeline' && !timelineMap) initTimelineView();
                 if (viewName === 'compare') renderCompareTables();
+                 if (viewName === 'report') renderReport(appState.currentTravelDay);
             }
 
             function renderCards() {
@@ -469,6 +411,40 @@
                 regionChartInstance = new Chart(document.getElementById('regionChart'), { type: 'bar', data: { labels: Object.keys(regionCounts), datasets: [{ label: '맛집 수', data: Object.values(regionCounts), backgroundColor: chartColors[0] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } });
             }
 
+            function renderReport(day) {
+                const reportContainer = document.getElementById('report-content-container');
+                const reportDaySelector = document.getElementById('report-day-selector');
+                
+                reportDaySelector.querySelectorAll('.day-btn').forEach(btn => {
+                     btn.classList.toggle('active', parseInt(btn.dataset.day) === day);
+                });
+                
+                const dayData = travelData[day];
+                const descriptions = {
+                    1: '공항 도착 후 남쪽으로 이동하여 맛있는 점심을 먹고, 바로 근처의 환상적인 용머리해안을 산책합니다. 이후 중문 숙소에 체크인한 뒤, 서쪽 협재해변의 노을과 함께 간식을 즐기고 흑돼지로 완벽한 저녁을 마무리하는 코스입니다.',
+                    2: '서귀포에서 아침을 시작하여, 제주 동쪽 해안을 따라 드라이브하며 중간에 아름다운 월정리해변에서 쉬어갑니다. 최종 목적지인 함덕해수욕장에서는 에메랄드빛 바다를 마음껏 즐기고, 숙소 근처 맛집에서 하루를 마무리합니다.',
+                    3: '성산일출봉의 장엄한 일출로 시작하여, 제주 동쪽 해안을 따라 드라이브합니다. 공항으로 가기 전, 동문시장의 활기찬 분위기와 이호테우해변의 로맨틱한 일몰을 감상하며 여행의 마지막을 장식합니다.'
+                };
+                
+                let reportHtml = `<div class="mb-6"><h2 class="text-3xl font-bold text-sky-500 mb-2">Day ${day}: ${day === 1 ? '남부의 맛과 황홀한 해안 절경' : (day === 2 ? '서귀포의 아침과 에메랄드빛 함덕' : '성산의 일출, 동문시장의 밤')}</h2><p class="text-gray-600">${descriptions[day]}</p></div><div class="space-y-4">`;
+
+                dayData.forEach(item => {
+                    reportHtml += `
+                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-lg text-sky-500">${item.time}</span>
+                                <span class="text-sm font-semibold text-gray-500">${item.duration ? `🚗 약 ${item.duration}분 소요` : '여행 시작'}</span>
+                            </div>
+                            <h3 class="font-bold text-xl">${item.icon} ${item.place}</h3>
+                            <p class="text-gray-600">${item.activity}</p>
+                            ${item.path ? `<p class="text-xs text-gray-500 mt-1">${item.path}</p>` : ''}
+                        </div>
+                    `;
+                });
+                reportHtml += `</div>`;
+                reportContainer.innerHTML = reportHtml;
+            }
+
             document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
             document.querySelectorAll('.filter-btn.category-btn').forEach(btn => btn.addEventListener('click', () => {
                 document.querySelector('.filter-btn.category-btn.active').classList.remove('active');
@@ -476,6 +452,14 @@
                 appState.filters.category = btn.dataset.category;
                 renderCards();
             }));
+            
+            document.getElementById('report-day-selector').addEventListener('click', (e) => {
+                const btn = e.target.closest('.day-btn');
+                if(btn){
+                    renderReport(parseInt(btn.dataset.day));
+                }
+            });
+
             document.getElementById('modal-close-btn').addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => e.target === modal && closeModal());
 
@@ -484,3 +468,4 @@
     </script>
 </body>
 </html>
+
